@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:56:29 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/08 02:29:18 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/08 23:06:48 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,22 @@ t_var	*ft_init_var(char **envp)
 	return (v);
 }
 
+void	ft_free_var(t_var *v)
+{
+	int	i;
+
+	i = -1;
+	while (++i < v->pipe_count)
+		if (v->cmd[i])
+			ft_lstfree_content(&v->cmd[i]);
+	free(v->cmd);
+	ft_close_fd_cmd(v->fd_cmd);
+	ft_lstfree_content(&v->fd_cmd);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_var	*v;
-	int		i;
 
 	(void)argc;
 	(void)argv;
@@ -45,14 +57,8 @@ int	main(int argc, char **argv, char **envp)
 		v->line = ft_read_command(v->line);
 		v->fd_cmd = ft_set_fd_cmd();
 		v->cmd = ft_parse_command(v);
-		if (v->cmd[0])
-			ft_execution(v, v->fd_cmd);
-		i = 0;
-		while (v->cmd[i])
-			ft_lstfree_content(&v->cmd[i++]);
-		free(v->cmd);
-		ft_close_fd_cmd(v->fd_cmd);
-		ft_lstfree_content(&v->fd_cmd);
+		ft_execution(v, v->fd_cmd);
+		ft_free_var(v);
 	}
 	return (0);
 }
@@ -60,36 +66,27 @@ int	main(int argc, char **argv, char **envp)
 // signal c'est pour intercepter les ctrl-* mais ca marche pas encore
 //	signal(SIGINT, ft_sig_handler);
 
-/*printage de var
-	printf("PATH=");
-	for (int i = 0; v->path[i]; i++)
-		printf("%s:", v->path[i]);
-	printf("\n\nenv :\n");
-	t_list	*tmp = v->env;
-	while (tmp)
-	{
-		printf("%s\n", (char *)tmp->content);
-		tmp = tmp->next;
-	}*/
-
-	/*//printage commande
+	/*//printage commande////////////////////////////////////////////////////
 		t_list	*tmp;
-		for (int i = 0; v->cmd[i]; i++)
-		{
-			tmp = v->cmd[i];
-			printf("pipe[%d]:\n", i);
-			while (tmp)
+		for (i = 0; i < v->pipe_count; i++)
+		{	
+			printf("pipe[%d]:\n", i);	
+			if (v->cmd[i])
 			{
-				printf("> %s$\n", (char *)tmp->content);
-				tmp = tmp->next;
+				tmp = v->cmd[i];
+				while (tmp)
+				{
+					printf("> %s$\n", (char *)tmp->content);
+					tmp = tmp->next;
+				}
 			}
 		}
 		//printage fd
-		int i = 0;
+		i = 0;
 		tmp = v->fd_cmd;
 		while (tmp)
 		{
 			int *fdd = (int *)tmp->content;
 			printf("%d: fd[0] = %d\tfd[1] = %d\n", i++, fdd[0], fdd[1]);
 			tmp = tmp->next;
-		}*/
+		}//////////////////////////////////////////////////////////////////*/

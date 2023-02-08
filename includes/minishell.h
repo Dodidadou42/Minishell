@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:54:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/08 02:28:55 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/08 22:46:57 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@
 # include <readline/history.h>
 # include <errno.h>
 # include <signal.h>
-# include "libft/libft.h"
 # include <dirent.h>
 # include <sys/types.h>
 # include <sys/stat.h>
+# include "libft/libft.h"
 
 # define STDIN 0
 # define STDOUT 1
@@ -43,6 +43,7 @@ typedef struct s_var
 	char	**path;
 	char	*line;
 
+	int		pipe_count;
 }				t_var;
 
 //global variable
@@ -63,17 +64,17 @@ char	*ft_get_metachar(char *line, int *i);
 int		ft_handle_metachar(t_var *v, char *line, int *i);
 //builtin
 void	ft_echo(t_list *cmd);
+void	ft_cd(t_list *cmd, t_list *env);
 void	ft_pwd(void);
 void	ft_export(t_list *cmd, t_list *env);
 void	ft_unset(t_list *cmd, t_list *env);
 void	ft_env(t_list *env);
-void    ft_cd(t_list *cmd, t_list *env);
 //execution
 void	ft_execution(t_var *v, t_list *fd_cmd);
 //signal
 void	ft_sig_handler(int signal);
 //utils
-char	**ft_list_to_string_tab(t_list *lst);
+char	**ft_lst_to_strtab(t_list *lst);
 int		ft_count_char(char *s, char c);
 char	*ft_getenv(t_list *env, char *name);
 int		ft_is_builtin(t_list *cmd);

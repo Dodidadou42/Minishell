@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:35:45 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/07 19:57:29 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/08 22:46:31 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,5 +123,6 @@ t_list	**ft_parse_command(t_var *v)
 		}
 	}
 	cmd[++j] = NULL;
+	v->pipe_count = j;
 	return (cmd);
 }

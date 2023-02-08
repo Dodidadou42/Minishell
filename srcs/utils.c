@@ -6,13 +6,13 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:18:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/08 02:29:07 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/08 23:24:00 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	**ft_list_to_string_tab(t_list *lst)
+char	**ft_lst_to_strtab(t_list *lst)
 {
 	char	**tab;
 	int		i;
