@@ -3,38 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strnstr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ddychus <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mpelazza <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/10 16:06:42 by ddychus           #+#    #+#             */
-/*   Updated: 2022/11/15 15:30:44 by ddychus          ###   ########.fr       */
+/*   Created: 2022/11/08 13:35:32 by mpelazza          #+#    #+#             */
+/*   Updated: 2022/11/14 11:35:32 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "libft.h"
 
-char	*ft_strnstr(const char *big, const char *little, size_t len)
+char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 {
 	unsigned int	i;
 	unsigned int	j;
 
-	i = 0;
-	if (!ft_strlen(little))
-		return ((char *)big);
-	if (!big && len == 0)
-		return (0);
-	while (big[i] && i < len)
+	if (!needle[0])
+		return ((char *)haystack);
+	i = -1;
+	while (++i < len && haystack[i])
 	{
-		if (big[i] == *little)
-		{
-			j = 1;
-			while (big[j + i] == little[j] && little[j])
-				j++;
-			if (i + j > len)
-				return (0);
-			if (!little[j])
-				return ((char *)&big[i]);
-		}
-		i++;
+		j = 0;
+		while (haystack[i + j] == needle[j] && haystack[i + j])
+			if (!needle[++j] && i + j - 1 < len)
+				return ((char *)&haystack[i]);
 	}
-	return (0);
+	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 11:45:18 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/07 01:03:05 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/08 02:31:23 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,13 @@ void	ft_handle_pipe(t_var *v, char *line, int *i)
 	while (line[*i] && line[*i] == ' ')
 		++(*i);
 	if (!line[*i])
-		v->line = ft_strjoin(v->line, readline("> "));
+		v->line = ft_strjoin_free(v->line, readline("> "), 3);
 	else if (line[*i] == '|')
 		ft_put_errors("syntax error near unexpected token ", "|", "", 1);
 	ft_lstadd_back(&v->fd_cmd, ft_set_fd_cmd());
 }
 
+// peut etre faut dup2(fd_pipe[0], fd_cast[0]); dans le heredoc
 void	ft_heredoc(t_var *v, char *line, int *i)
 {
 	t_list	*tmp1;
@@ -39,19 +40,23 @@ void	ft_heredoc(t_var *v, char *line, int *i)
 	int		fd_pipe[2];
 
 	*i += 2;
-	limiter = ft_get_word(v, line, i);
+	while (line[*i] && line[*i] == ' ')
+		++(*i);
+	limiter = ft_strjoin_free(ft_get_word(v, line, i), "\n", 1);
+	tmp2 = ft_strjoin_free(readline("> "), "\n", 1);
 	pipe(fd_pipe);
-	tmp2 = readline("> ");
 	while (ft_strcmp(tmp2, limiter))
 	{
 		ft_putstr_fd(tmp2, fd_pipe[1]);
-		tmp2 = readline("> ");
+		free(tmp2);
+		tmp2 = ft_strjoin_free(readline("> "), "\n", 1);
 	}
 	close(fd_pipe[1]);
+	free(tmp2);
+	free(limiter);
 	tmp1 = ft_lstlast(v->fd_cmd);
 	fd_cast = (int *)tmp1->content;
 	fd_cast[0] = fd_pipe[0];
-	free(limiter);
 }
 
 void	ft_get_fd_cmd(t_var *v, char *line, int *i)

@@ -3,40 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ddychus <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mpelazza <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/08 17:10:48 by ddychus           #+#    #+#             */
-/*   Updated: 2022/11/15 15:30:24 by ddychus          ###   ########.fr       */
+/*   Created: 2022/11/09 10:26:40 by mpelazza          #+#    #+#             */
+/*   Updated: 2022/11/11 08:24:14 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "libft.h"
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	int		len;
-	int		i;
-	int		j;
-	char	*ret;
+	char	*s_join;
 
 	if (!s1 || !s2)
 		return (NULL);
-	i = 0;
-	j = 0;
-	len = ft_strlen(s1) + ft_strlen(s2);
-	ret = malloc(sizeof(char) * (len + 1));
-	if (!ret)
-		return (0);
-	while (s1[i])
+	len = ft_strlen(s1) + ft_strlen(s2) + 1;
+	s_join = malloc(sizeof(char) * len);
+	if (s_join)
 	{
-		ret[i] = s1[i];
-		i++;
+		ft_strlcpy(s_join, s1, len);
+		ft_strlcat(s_join, s2, len);
 	}
-	while (s2[j])
-	{
-		ret[i + j] = s2[j];
-		j++;
-	}
-	ret[i + j] = '\0';
-	return (ret);
+	return (s_join);
 }

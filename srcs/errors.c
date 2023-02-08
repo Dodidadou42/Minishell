@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   errors.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/01 16:18:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/07 01:00:13 by mpelazza         ###   ########.fr       */
+/*   Created: 2023/02/08 02:26:37 by mpelazza          #+#    #+#             */
+/*   Updated: 2023/02/08 02:27:37 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,32 +32,4 @@ void	ft_put_errors(char *cause, char *details, char *msg, int is_exit)
 	if (is_exit)
 		exit(is_exit);
 }
-
-char	**ft_list_to_string_tab(t_list *lst)
-{
-	char	**tab;
-	int		i;
-
-	tab = malloc(sizeof(char *) * (ft_lstsize(lst) + 1));
-	i = 0;
-	while (lst)
-	{
-		tab[i++] = ft_strdup((char *)lst->content);
-		lst = lst->next;
-	}
-	tab[i] = NULL;
-	return (tab);
-}
-
-int	ft_count_char(char *s, char c)
-{
-	int	count;
-	int	i;
-
-	i = -1;
-	count = 0;
-	while (s[++i])
-		if (s[i] == c)
-			++count;
-	return (count);
-}
+// faire plusieurs fontctions pcq ca va pas 

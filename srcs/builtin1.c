@@ -6,35 +6,11 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 01:35:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/05 19:02:25 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/08 01:46:27 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-int	ft_builtin(t_list *cmd, t_list *env)
-{
-	if (!ft_strcmp((char *)cmd->content, "echo"))
-		ft_echo(cmd->next);
-	else if (!ft_strcmp((char *)cmd->content, "cd"))
-		ft_cd(cmd->next, env);
-	else if (!ft_strcmp((char *)cmd->content, "pwd"))
-		ft_pwd();
-	else if (!ft_strcmp((char *)cmd->content, "export"))
-		ft_export(cmd->next, env);
-	else if (!ft_strcmp((char *)cmd->content, "unset"))
-		ft_unset(cmd->next, env);
-	else if (!ft_strcmp((char *)cmd->content, "env"))
-		ft_env(env);
-	else if (!ft_strcmp((char *)cmd->content, "exit"))
-	{
-		system("leaks minishell");
-		exit(0);
-	}
-	else
-		return (0);
-	return (1);
-}
 
 int	ft_echo_check_opt(char *opt)
 {
@@ -69,13 +45,13 @@ void	ft_echo(t_list *cmd)
 	while (cmd)
 	{
 		cast = (char *)cmd->content;
-		ft_putstr_fd(cast, STDIN);
+		ft_putstr_fd(cast, STDOUT);
 		if (cmd->next)
-			ft_putchar_fd(' ', STDIN);
+			ft_putchar_fd(' ', STDOUT);
 		cmd = cmd->next;
 	}
 	if (nl)
-		ft_putchar_fd('\n', STDIN);
+		ft_putchar_fd('\n', STDOUT);
 }
 
 void	ft_pwd(void)
@@ -91,8 +67,8 @@ void	ft_env(t_list *env)
 {
 	while (env)
 	{
-		ft_putstr_fd((char *)env->content, STDIN);
-		ft_putchar_fd('\n', STDIN);
+		ft_putstr_fd((char *)env->content, STDOUT);
+		ft_putchar_fd('\n', STDOUT);
 		env = env->next;
 	}
 }

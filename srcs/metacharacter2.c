@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/06 20:04:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/07 01:00:35 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/07 20:05:08 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,11 @@ char	*ft_get_metachar(char *line, int *i)
 	{
 		*i += 1;
 		return (">");
+	}
+	else if (line[*i] == '<' && line[*i + 1] == '<')
+	{
+		*i += 2;
+		return ("<<");
 	}
 	else if (line[*i] == '<')
 	{

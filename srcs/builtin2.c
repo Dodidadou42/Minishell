@@ -12,31 +12,68 @@
 
 #include "../includes/minishell.h"
 
-char    *get_logname(t_list *env)
+int check_symbolic_links(char *path, char *error)
 {
-    char    *logname;
+    struct stat path_stat;
 
-    while(env && ft_strncmp("LOGNAME=", (char *)env->content, 8))
-        env = env->next;
-    logname = ft_strdup((char *)env->content + 8);
-    return (logname);
+    lstat(path, &path_stat);
+    if (S_ISLNK(path_stat.st_mode))
+    {
+        if (path_stat.st_nlink > 1)
+        {
+            error = ft_strjoin(path, ": Too many levels of symbolic links");
+            ft_put_errors("cd", 0, error, 0);
+            free(error);
+            return (0);
+        }
+    }
+    return (1);
 }
 
-void    check_dir(DIR *dir, char *path)
+int check_is_dir_and_perm(char *path, char *error)
 {
-    char    *error;
+    struct stat path_stat;
+
+    stat(path, &path_stat);
+    if (S_ISREG(path_stat.st_mode))
+    {
+        error = ft_strjoin(path, ": Not a directory");
+        ft_put_errors("cd", 0, error, 0);
+        free(error);
+        return (0);
+    }
+    if (S_ISDIR(path_stat.st_mode) && !(path_stat.st_mode & S_IRUSR))
+    {
+        error = ft_strjoin(path, ": Permission denied");
+        ft_put_errors("cd", 0, error, 0);
+        free(error);
+        return (0);
+    }
+    return (1);
+}
+
+int   check_path(DIR *dir, char *path)
+{
+    char        *error;
 
     error = NULL;
+    if (!check_symbolic_links(path, error))
+        return (0);
     if (dir)
     {
         closedir(dir);
-        chdir(path);
+        if (!check_is_dir_and_perm(path, error))
+            return (0);
+        return (1);
     }
     else 
     {
-        error = ft_strjoin("no such file or directory: ", path);
+        if (!check_is_dir_and_perm(path, error))
+            return (0);
+        error = ft_strjoin(path, ": No such file or directory");
         ft_put_errors("cd", 0, error, 0);
         free(error);
+        return (0);
     }
 }
 
@@ -45,10 +82,10 @@ void    ft_cd(t_list *cmd, t_list *env)
     char    *path;
     char    *root;
 
-    root = ft_strjoin_free("/Users/", get_logname(env), 2);
+    root = ft_strjoin("/Users/", ft_getenv(env, "LOGNAME"));
     if (!cmd)
         path = ft_strdup(root);
-    else
+    else7yhb
         path = ft_strdup((char *)cmd->content);
     if (path[0] == '~' && path[1] && path[1] == '/')
     {
@@ -60,10 +97,8 @@ void    ft_cd(t_list *cmd, t_list *env)
         free(path);
         path = ft_strdup(root);
     }
-    check_dir(opendir(path), path);
+    if (check_path(opendir(path), path))
+        chdir(path);
     free(path);
     free(root);
 }
-    //cd fonctionne correctement, je crois gérer tous les leaks
-    // a voir si on trouve des cas tres particuliers sur le bash, chatgpt
-    // a parlé des problemes dautorisations et tout je check ca demain

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/31 16:54:48 by mpelazza          #+#    #+#             */
+/*   Updated: 2023/02/08 02:28:55 by mpelazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -10,66 +22,63 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <errno.h>
+# include <signal.h>
+# include "libft/libft.h"
+# include <dirent.h>
+# include <sys/types.h>
+# include <sys/stat.h>
 
-# define ERROR  2
-# define SP     0
-# define DQ     1
-# define Q      2
-
-typedef struct s_cmd
-{
-    char            *s;
-    int             type;
-    struct s_cmd    *next;
-}   t_cmd;
+# define STDIN 0
+# define STDOUT 1
+# define STDERR 2
 
 typedef struct s_var
 {
-    char    *line;
+	t_list	**cmd;
+	t_list	*env;
+	t_list	*fd_cmd;
 
-    char    **paths;
+	pid_t	process;
 
-    pid_t   pid_main;
+	char	**path;
+	char	*line;
 
-    t_cmd   *cmd;
-    t_cmd   *cmd_untrimmed;
+}				t_var;
 
-}   			t_var;
+//global variable
+//t_var	g_v;
 
-
-//MINISHELL
-t_var	*init_var(t_var *v, char **env);
-char	*read_command(void);
-t_cmd	*parse_command(char *line);
-void	exec(char *argv, char **env);
-void    free_var(t_var *v);
-
-//BUILTINS
-void    ft_echo(char **args);
-
-// LIBFT
-void	ft_putstr(char *str);
-void	ft_putstr_fd(char *s, int fd);
-char	**ft_split(char const *s, char c);
-int		ft_strchr(const char *str, int searchedChar);
-char	*ft_strjoin(char const *s1, char const *s2);
-size_t	ft_strlen(const char *str);
-int		ft_strncmp(char *str1, char *str2, size_t len);
-char	*ft_strnstr(const char *big, const char *little, size_t len);
-int     ft_strcmp(const char *s1, const char *s2);
-char	*ft_join_free(char *s1, char const *s2);
-char	*ft_strdup(const char *source);
-
-//UTILS
-int		msg(char *err);
-void	ft_put_errors(char *cause, char *details, int is_exit);
-
-//PARSE_COMMAND_UTILS
-int     get_wordlen(char *line, int type);
-int     is_space(char c);
-t_cmd   *add_cmd(int n);
-t_cmd	*trim_command(t_cmd *command);
-void	print_cmd(t_cmd *cmd);
-
+//parsing
+char	*ft_read_command(char *ret);
+char	*ft_get_word(t_var *v, char *line, int *i);
+t_list	**ft_parse_command(t_var *v);
+//parsing_tools
+int		ft_find_end_quote(char *s, int index);
+int		ft_env_var_name_len(char *name);
+int		ft_word_len(t_list *env, char *line);
+//metacharacters
+t_list	*ft_set_fd_cmd(void);
+void	ft_close_fd_cmd(t_list *fd_cmd);
+char	*ft_get_metachar(char *line, int *i);
+int		ft_handle_metachar(t_var *v, char *line, int *i);
+//builtin
+void	ft_echo(t_list *cmd);
+void	ft_pwd(void);
+void	ft_export(t_list *cmd, t_list *env);
+void	ft_unset(t_list *cmd, t_list *env);
+void	ft_env(t_list *env);
+void    ft_cd(t_list *cmd, t_list *env);
+//execution
+void	ft_execution(t_var *v, t_list *fd_cmd);
+//signal
+void	ft_sig_handler(int signal);
+//utils
+char	**ft_list_to_string_tab(t_list *lst);
+int		ft_count_char(char *s, char c);
+char	*ft_getenv(t_list *env, char *name);
+int		ft_is_builtin(t_list *cmd);
+void	ft_exec_builtin(t_list *cmd, t_list *env);
+//errors
+void	ft_put_errors(char *cause, char *details, char *msg, int is_exit);
 
 #endif

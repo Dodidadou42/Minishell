@@ -3,29 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ddychus <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mpelazza <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/08 11:53:36 by ddychus           #+#    #+#             */
-/*   Updated: 2022/11/10 14:53:20 by ddychus          ###   ########.fr       */
+/*   Created: 2022/11/08 11:28:03 by mpelazza          #+#    #+#             */
+/*   Updated: 2022/11/14 09:28:27 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "libft.h"
 
-int	ft_strncmp(char *str1, char *str2, size_t len)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
 	unsigned int	i;
-	unsigned char	*s1;
-	unsigned char	*s2;
 
-	s1 = (unsigned char *)str1;
-	s2 = (unsigned char *)str2;
+	if (!n)
+		return (0);
 	i = 0;
-	while ((s1[i] || s2[i]) && i < len)
-	{
-		if (s1[i] != s2[i])
-			return (s1[i] - s2[i]);
-		i++;
-	}
-	return (0);
+	while (s1[i] && s1[i] == s2[i] && i + 1 < n)
+		++i;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }

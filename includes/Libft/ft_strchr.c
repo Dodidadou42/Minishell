@@ -3,25 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ddychus <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mpelazza <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/07 16:44:27 by ddychus           #+#    #+#             */
-/*   Updated: 2022/12/13 15:49:10 by ddychus          ###   ########.fr       */
+/*   Created: 2022/11/08 10:33:34 by mpelazza          #+#    #+#             */
+/*   Updated: 2022/11/14 11:16:28 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "libft.h"
 
-int	ft_strchr(const char *str, int searchedChar)
+char	*ft_strchr(const char *s, int c)
 {
 	int	i;
 
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == (char)searchedChar)
-			return (i);
-		i++;
-	}
-	return (0);
+	i = -1;
+	while (s[++i])
+		if (s[i] == (char)c)
+			return ((char *)&s[i]);
+	if (s[i] == (char)c)
+		return ((char *)&s[i]);
+	return (NULL);
 }

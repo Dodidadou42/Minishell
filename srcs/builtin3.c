@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 02:11:22 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/07 01:00:01 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/08 01:31:07 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,13 @@ void	ft_export_print(t_list *env)
 	{
 		tmp = (char *)env_cpy->content;
 		i = -1;
-		ft_putstr_fd("declare x ", STDIN);
+		ft_putstr_fd("declare x ", STDOUT);
 		while (tmp[++i] != '=')
-			ft_putchar_fd(tmp[i], STDIN);
+			ft_putchar_fd(tmp[i], STDOUT);
 		if (tmp[i + 1])
 			while (tmp[i])
-				ft_putchar_fd(tmp[i++], STDIN);
-		ft_putchar_fd('\n', STDIN);
+				ft_putchar_fd(tmp[i++], STDOUT);
+		ft_putchar_fd('\n', STDOUT);
 		env_cpy = env_cpy->next;
 	}
 	ft_lstfree(&start);
