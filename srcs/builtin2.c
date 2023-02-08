@@ -85,7 +85,7 @@ void    ft_cd(t_list *cmd, t_list *env)
     root = ft_strjoin("/Users/", ft_getenv(env, "LOGNAME"));
     if (!cmd)
         path = ft_strdup(root);
-    else7yhb
+    else
         path = ft_strdup((char *)cmd->content);
     if (path[0] == '~' && path[1] && path[1] == '/')
     {
