@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:18:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/08 23:24:00 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/10 01:45:04 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,24 +70,26 @@ int	ft_is_builtin(t_list *cmd)
 	return (0);
 }
 
-void	ft_exec_builtin(t_list *cmd, t_list *env)
+char	*ft_get_path(t_list *env, char *cmd)
 {
-	if (!ft_strcmp((char *)cmd->content, "echo"))
-		ft_echo(cmd->next);
-	else if (!ft_strcmp((char *)cmd->content, "cd"))
-		ft_cd(cmd->next, env);
-	else if (!ft_strcmp((char *)cmd->content, "pwd"))
-		ft_pwd();
-	else if (!ft_strcmp((char *)cmd->content, "export"))
-		ft_export(cmd->next, env);
-	else if (!ft_strcmp((char *)cmd->content, "unset"))
-		ft_unset(cmd->next, env);
-	else if (!ft_strcmp((char *)cmd->content, "env"))
-		ft_env(env);
-	else if (!ft_strcmp((char *)cmd->content, "exit"))
+	char	**paths;	
+	char	*tmp;
+	int		i;
+
+	if (!access(cmd, F_OK) && ft_strchr(cmd, '/'))
+		return (ft_strdup(cmd));
+	paths = ft_split(ft_getenv(env, "PATH"), ':');
+	i = -1;
+	while (paths[++i])
 	{
-		system("leaks minishell");
-		exit(0);
+		tmp = ft_strjoin_free(paths[i], ft_strjoin("/", cmd), 2);
+		if (!access(tmp, F_OK))
+		{
+			ft_split_free(paths);
+			return (tmp);
+		}
+		free(tmp);
 	}
+	ft_split_free(paths);
+	return (NULL);
 }
-// PATH len = 4

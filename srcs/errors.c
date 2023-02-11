@@ -6,30 +6,53 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 02:26:37 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/08 02:27:37 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/10 15:11:43 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	ft_put_errors(char *cause, char *details, char *msg, int is_exit)
+int	ft_parsing_error(t_var *v, char *token)
+{
+	(void)v;
+	ft_putstr_fd("-minishell: syntax error near unexpected token `", STDERR);
+	ft_putstr_fd(token, STDERR);
+	ft_putstr_fd("\'\n", STDERR);
+	ft_bzero((void *)v->line, ft_strlen(v->line));
+	v->pipeline_exit_status = 258;
+	return (258);
+}
+
+int	ft_exec_error(t_var *v, char *cause, char *error, int status)
 {
 	ft_putstr_fd("-minishell: ", STDERR);
-	if (cause)
-		ft_putstr_fd(cause, STDERR);
-	if (details)
-	{
-		ft_putchar_fd('`', STDERR);
-		ft_putstr_fd(details, STDERR);
-		ft_putchar_fd('\'', STDERR);
-	}
+	ft_putstr_fd(cause, STDERR);
 	ft_putstr_fd(": ", STDERR);
-	if (msg)
-		ft_putstr_fd(msg, STDERR);
+	if (error)
+		ft_putstr_fd(error, STDERR);
 	else
 		ft_putstr_fd(strerror(errno), STDERR);
-	write(STDERR, "\n", 1);
-	if (is_exit)
-		exit(is_exit);
+	ft_putchar_fd('\n', STDERR);
+	v->pipeline_exit_status = status;
+	return (status);
 }
-// faire plusieurs fontctions pcq ca va pas 
+
+int	ft_builtin_error(t_var *v, char *cmd, char *cause, char *error)
+{
+	ft_putstr_fd("-minishell: ", STDERR);
+	ft_putstr_fd(cmd, STDERR);
+	ft_putstr_fd(": ", STDERR);
+	if (!ft_strcmp(cmd, "export"))
+		ft_putchar_fd('`', STDERR);
+	ft_putstr_fd(cause, STDERR);
+	if (!ft_strcmp(cmd, "export"))
+		ft_putchar_fd('\'', STDERR);
+	ft_putstr_fd(": ", STDERR);
+	if (error)
+		ft_putstr_fd(error, STDERR);
+	else
+		ft_putstr_fd(strerror(errno), STDERR);
+	ft_putchar_fd('\n', STDERR);
+	v->pipeline_exit_status = 1;
+	return (1);
+}

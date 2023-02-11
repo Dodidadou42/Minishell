@@ -6,13 +6,13 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 06:47:05 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/09 00:00:59 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/11 10:04:35 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	check_symbolic_links(char *path, char *error)
+int	check_symbolic_links(t_var *v, char *path)
 {
 	struct stat	path_stat;
 
@@ -21,58 +21,48 @@ int	check_symbolic_links(char *path, char *error)
 	{
 		if (path_stat.st_nlink > 1)
 		{
-			error = ft_strjoin(path, ": Too many levels of symbolic links");
-			ft_put_errors("cd", 0, error, 0);
-			free(error);
+			ft_builtin_error(v, "cd", path,
+				"Too many levels of symbolic links");
 			return (0);
 		}
 	}
 	return (1);
 }
 
-int	check_is_dir_and_perm(char *path, char *error)
+int	check_is_dir_and_perm(t_var *v, char *path)
 {
 	struct stat	path_stat;
 
 	stat(path, &path_stat);
 	if (S_ISREG(path_stat.st_mode))
 	{
-		error = ft_strjoin(path, ": Not a directory");
-		ft_put_errors("cd", 0, error, 0);
-		free(error);
+		ft_builtin_error(v, "cd", path, "Not a directory");
 		return (0);
 	}
 	if (S_ISDIR(path_stat.st_mode) && !(path_stat.st_mode & S_IRUSR))
 	{
-		error = ft_strjoin(path, ": Permission denied");
-		ft_put_errors("cd", 0, error, 0);
-		free(error);
+		ft_builtin_error(v, "cd", path, "Permission denied");
 		return (0);
 	}
 	return (1);
 }
 
-int	check_path(DIR *dir, char *path)
+int	check_path(t_var *v, DIR *dir, char *path)
 {
-	char	*error;
-
-	error = NULL;
-	if (!check_symbolic_links(path, error))
+	if (!check_symbolic_links(v, path))
 		return (0);
 	if (dir)
 	{
 		closedir(dir);
-		if (!check_is_dir_and_perm(path, error))
+		if (!check_is_dir_and_perm(v, path))
 			return (0);
 		return (1);
 	}
 	else
 	{
-		if (!check_is_dir_and_perm(path, error))
+		if (!check_is_dir_and_perm(v, path))
 			return (0);
-		error = ft_strjoin(path, ": No such file or directory");
-		ft_put_errors("cd", 0, error, 0);
-		free(error);
+		ft_builtin_error(v, "cd", path, "No such file or directory");
 		return (0);
 	}
 }
@@ -88,12 +78,13 @@ void	ft_change_pwd(t_list *env)
 		{
 			free(env->content);
 			env->content = (void *)pwd;
+			return ;
 		}
 		env = env->next;
 	}
 }
 
-void	ft_cd(t_list *cmd, t_list *env)
+void	ft_cd(t_var *v, t_list *cmd, t_list *env)
 {
 	char	*path;
 	char	*root;
@@ -113,7 +104,7 @@ void	ft_cd(t_list *cmd, t_list *env)
 		free(path);
 		path = ft_strdup(root);
 	}
-	if (check_path(opendir(path), path))
+	if (check_path(v, opendir(path), path))
 		chdir(path);
 	ft_change_pwd(env);
 	free(path);
@@ -128,3 +119,7 @@ void	ft_cd(t_list *cmd, t_list *env)
 //j'ai aussi rajouter une petite fonction pour mettre a jour le pwd dans l'env
 
 //Sinon c'est carre j'ai pas reussi a la casser pour le moment bien joue mec
+
+//J'ai fait une fonction error expres pour les builtin 
+// pcq elles ont 2 truc genre "cd: filename: ", "export: 'B=4': "
+// donc plus besoin de faire un join qu'il faut free apres

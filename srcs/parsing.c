@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:35:45 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/08 22:46:31 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/11 10:20:58 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,13 @@ void	ft_get_quote(t_list *env, char *line, char *word, int *i[2])
 	*i[0] += 1;
 	while (line[*i[0]])
 	{
-		if (line[*i[0]] == '$' && type == '\"')
+		if (line[*i[0]] == '$' && line[*i[0] + 1]
+			&& !ft_iswspace(line[*i[0] + 1]) && type == '\"')
 			ft_get_env_var(env, &line[*i[0]], word, (int *[]){i[0], i[1]});
 		else
 			word[(*i[1])++] = line[(*i[0])++];
 	}
+	line[*i[0]] = type;
 	*i[0] += 1;
 }
 
@@ -75,11 +77,6 @@ char	*ft_get_word(t_var *v, char *line, int *i)
 	char	*word;
 	int		j;
 
-	j = ft_handle_metachar(v, line, i);
-	if (j == 1)
-		return (NULL);
-	if (j == 2)
-		return ("");
 	word = malloc(sizeof(char) * (ft_word_len(v->env,
 					ft_strdup(&line[*i])) + 1));
 	j = 0;
@@ -87,7 +84,7 @@ char	*ft_get_word(t_var *v, char *line, int *i)
 	{
 		if (line[*i] == '\'' || line[*i] == '\"')
 			ft_get_quote(v->env, line, word, (int *[]){i, &j});
-		else if (line[*i] == '$')
+		else if (line[*i] == '$' && line[*i + 1] && !ft_iswspace(line[*i + 1]))
 			ft_get_env_var(v->env, &line[*i], word, (int *[]){i, &j});
 		else if (!ft_strchr(" |<>", line[*i]))
 			word[j++] = line[(*i)++];
@@ -101,28 +98,23 @@ char	*ft_get_word(t_var *v, char *line, int *i)
 t_list	**ft_parse_command(t_var *v)
 {
 	t_list	**cmd;
-	char	*tmp;
 	int		i;
-	int		j;
 
 	cmd = malloc(sizeof(t_list *) * ((ft_count_char(v->line, '|')) + 2));
 	cmd[0] = NULL;
 	i = 0;
-	j = 0;
 	while (v->line[i])
 	{
-		while (v->line[i] && v->line[i] == ' ')
+		while (v->line[i] && ft_iswspace(v->line[i]))
 			++i;
 		if (v->line[i])
 		{
-			tmp = ft_get_word(v, v->line, &i);
-			if (tmp && tmp[0])
-				ft_lstadd_back(&cmd[j], ft_lstnew(tmp));
-			else if (!tmp)
-				cmd[++j] = NULL;
+			if (ft_handle_metachar(v, v->line, &i) == 1)
+				cmd[++(v->pipe_count)] = NULL;
+			else if (v->line[i] && !ft_iswspace(v->line[i]))
+				ft_lstadd_back(&cmd[v->pipe_count],
+					ft_lstnew(ft_get_word(v, v->line, &i)));
 		}
 	}
-	cmd[++j] = NULL;
-	v->pipe_count = j;
 	return (cmd);
 }

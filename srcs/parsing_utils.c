@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 18:59:08 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/06 23:36:59 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/11 10:21:22 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	ft_env_var_name_len(char *name)
 	int	len;
 
 	i = 1;
-	while (name[i] && !ft_strchr("\"\' <>$|", name[i]))
+	while (name[i] && (ft_isalpha(name[i]) || name[i] == '_'))
 		++i;
 	swp = name[i];
 	name[i] = '\0';
@@ -74,7 +74,8 @@ int	ft_quote_len(t_list *env, char *line, int *i)
 	len = 0;
 	while (line[*i])
 	{
-		if (line[*i] == '$' && type == '\"')
+		if (line[*i] == '$' && line[*i + 1]
+			&& !ft_iswspace(line[*i + 1]) && type == '\"')
 			len += ft_env_var_len(env, &line[*i], i);
 		else
 		{
@@ -97,7 +98,7 @@ int	ft_word_len(t_list *env, char *line)
 	{
 		if (line[i] == '\'' || line[i] == '\"')
 			len += ft_quote_len(env, line, &i);
-		else if (line[i] == '$')
+		else if (line[i] == '$' && line[i + 1] && !ft_iswspace(line[i + 1]))
 			len += ft_env_var_len(env, &line[i], &i);
 		else if (!ft_strchr(" |<>", line[i]))
 		{

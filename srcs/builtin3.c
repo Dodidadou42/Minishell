@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 02:11:22 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/08 01:31:07 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/11 10:05:04 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,28 +60,36 @@ void	ft_export_print(t_list *env)
 
 // pas au point les checks je reviendai dessus plus tard
 
-int	ft_check_export(t_list *cmd)
+int	ft_check_export(t_var *v, t_list *cmd)
 {
 	char	*tmp;
+	int		i;
 
 	while (cmd)
 	{
-		if (!ft_strcmp((char *)cmd->content, "="))
+		tmp = (char *)cmd->content;
+		i = -1;
+		if (!tmp[0] || tmp[0] == '=')
 		{
-			ft_put_errors("export: ", "=", "not a valid identifier", 0);
+			ft_builtin_error(v, "export", (char *)cmd->content,
+				"not a valid indentifier");
 			return (0);
 		}
-		tmp = (char *)cmd->content;
-		while (*tmp && *tmp != '=')
-			if (ft_isdigit(*tmp++))
-				ft_put_errors("export: ", (char *)cmd->content,
-					"not a valid identifier", 0);
+		while (tmp[++i] && tmp[i] != '=')
+		{
+			if (!ft_isalpha(tmp[i]) && tmp[i] != '_')
+			{
+				ft_builtin_error(v, "export", (char *)cmd->content,
+					"not a valid identifier");
+				return (0);
+			}
+		}
 		cmd = cmd->next;
 	}
 	return (1);
 }
 
-void	ft_export(t_list *cmd, t_list *env)
+void	ft_export(t_var *v, t_list *cmd, t_list *env)
 {
 	t_list	*tmp;
 
@@ -89,7 +97,7 @@ void	ft_export(t_list *cmd, t_list *env)
 		ft_export_print(env);
 	while (cmd)
 	{
-		if (!ft_check_export(cmd))
+		if (!ft_check_export(v, cmd))
 			break ;
 		if (!ft_strchr((char *)cmd->content, '='))
 			cmd->content

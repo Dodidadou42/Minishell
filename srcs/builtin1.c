@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 01:35:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/08 01:46:27 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/10 01:15:15 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,15 @@ void	ft_echo(t_list *cmd)
 		ft_putchar_fd('\n', STDOUT);
 }
 
-void	ft_pwd(void)
+void	ft_pwd(t_var *v)
 {
 	char	*pwd;
 
 	pwd = getcwd(NULL, 0);
-	printf("%s\n", pwd);
+	if (pwd)
+		printf("%s\n", pwd);
+	else
+		ft_exec_error(v, "pwd", NULL, 124);
 	free(pwd);
 }
 

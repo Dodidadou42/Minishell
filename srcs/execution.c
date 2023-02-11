@@ -6,28 +6,31 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:48:12 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/08 23:19:40 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/11 10:05:15 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*ft_get_path(t_list *env, char *cmd)
+void	ft_exec_builtin(t_var *v, t_list *cmd, t_list *env)
 {
-	char	**paths;	
-	char	*tmp;
-	int		i;
-
-	paths = ft_split(ft_getenv(env, "PATH"), ':');
-	i = -1;
-	while (paths[++i])
+	if (!ft_strcmp((char *)cmd->content, "echo"))
+		ft_echo(cmd->next);
+	else if (!ft_strcmp((char *)cmd->content, "cd"))
+		ft_cd(v, cmd->next, env);
+	else if (!ft_strcmp((char *)cmd->content, "pwd"))
+		ft_pwd(v);
+	else if (!ft_strcmp((char *)cmd->content, "export"))
+		ft_export(v, cmd->next, env);
+	else if (!ft_strcmp((char *)cmd->content, "unset"))
+		ft_unset(cmd->next, env);
+	else if (!ft_strcmp((char *)cmd->content, "env"))
+		ft_env(env);
+	else if (!ft_strcmp((char *)cmd->content, "exit"))
 	{
-		tmp = ft_strjoin_free(paths[i], ft_strjoin("/", cmd), 2);
-		if (!access(tmp, F_OK))
-			return (tmp);
-		free(tmp);
+		system("leaks minishell");
+		exit(0);
 	}
-	return (NULL);
 }
 
 void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
@@ -39,12 +42,14 @@ void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 	{
 		ft_split_free(args);
 		ft_split_free(envp);
-		ft_put_errors((char *)cmd->content, NULL, "command not found", 127);
+		ft_exec_error(v, (char *)cmd->content, "command not found", 127);
+		exit(127);
 	}
 	execve(path, args, envp);
+	free(path);
 	ft_split_free(args);
 	ft_split_free(envp);
-	ft_put_errors((char *)cmd->content, NULL, "permission denied", 126);
+	ft_exec_error(v, (char *)cmd->content, "permission denied", 126);
 }
 
 void	ft_exec_process(t_var *v, t_list *cmd, int fd_pipe[2])
@@ -68,10 +73,11 @@ int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
 		dup2(fd_cmd[0], STDIN);
 	if (fd_cmd[1] != 1)
 		dup2(fd_cmd[1], STDOUT);
-	else if (i + 1 < v->pipe_count)
+	else if (i + 1 <= v->pipe_count)
 		dup2(fd_pipe[1], STDOUT);
+	v->pipeline_exit_status = 0;
 	if (v->cmd[i] && ft_is_builtin(v->cmd[i]))
-		ft_exec_builtin(v->cmd[i], v->env);
+		ft_exec_builtin(v, v->cmd[i], v->env);
 	else if (v->cmd[i])
 		ft_exec_process(v, v->cmd[i], fd_pipe);
 	close(fd_pipe[1]);
@@ -85,14 +91,13 @@ void	ft_execution(t_var *v, t_list *fd_cmd)
 	int	std_save[2];
 	int	*fd_cmd_cast;
 	int	fd_pipe_out;
-	int	i;
 
 	std_save[0] = dup(STDIN);
 	std_save[1] = dup(STDOUT);
-	i = -1;
-	while (++i < v->pipe_count)
+	while (++(v->pipe_start) <= v->pipe_count)
 	{
-		fd_pipe_out = ft_setup_n_launch(v, std_save, (int *)fd_cmd->content, i);
+		fd_pipe_out = ft_setup_n_launch(v, std_save,
+				(int *)fd_cmd->content, v->pipe_start);
 		fd_cmd = fd_cmd->next;
 		if (fd_cmd)
 		{

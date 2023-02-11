@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 11:58:09 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/04 18:21:47 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/10 12:28:43 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int		ft_isdigit(int c);
 int		ft_isalnum(int c);
 int		ft_isascii(int c);
 int		ft_isprint(int c);
+int		ft_iswspace(int c);
 int		ft_toupper(int c);
 int		ft_tolower(int c);
 int		ft_strcmp(const char *s1, const char *s2);
