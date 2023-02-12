@@ -12,16 +12,19 @@
 
 #include "../includes/minishell.h"
 
-char	*ft_read_command(char *ret)
+char	*ft_read_command(char *ret, t_var *v)
 {
 	if (ret)
 		free(ret);
 	ret = readline("minishell$> ");
+
 	while (!ret[0])
 	{
 		free(ret);
 		ret = readline("minishell$> ");
 	}
+	add_history(ret);
+	ft_get_history(ret, v);
 	return (ret);
 }
 

@@ -109,17 +109,3 @@ void	ft_cd(t_var *v, t_list *cmd, t_list *env)
 	ft_change_pwd(env);
 	free(path);
 }
-
-//j'ai changer ca pcq ya deja une variable HOME qui contient le path
-// apres faut voir si elle est aussi a l'ecole mais je pense
-//		root = ft_strjoin("/Users/", ft_getenv(env, "LOGNAME"));
-//---->	root = ft_getenv(env, HOME);
-//		free(root); ----> supprimer		 comme il est plus malloc
-
-//j'ai aussi rajouter une petite fonction pour mettre a jour le pwd dans l'env
-
-//Sinon c'est carre j'ai pas reussi a la casser pour le moment bien joue mec
-
-//J'ai fait une fonction error expres pour les builtin 
-// pcq elles ont 2 truc genre "cd: filename: ", "export: 'B=4': "
-// donc plus besoin de faire un join qu'il faut free apres

@@ -1,7 +1,7 @@
 NAME	= minishell
 
 SRCS	= srcs/minishell.c srcs/parsing.c srcs/parsing_utils.c	\
-		  srcs/metacharacter.c srcs/execution.c	\
+		  srcs/metacharacter.c srcs/execution.c srcs/history.c \
 		  srcs/builtin1.c srcs/builtin2.c srcs/builtin3.c	\
 		  srcs/signal.c srcs/utils1.c srcs/utils2.c srcs/errors.c
 
@@ -11,8 +11,7 @@ CFLAGS	= -Wall -Wextra -Werror
 
 LIBFT	= -Lincludes/libft -lft
 
-READLINE = -lreadline
-
+READLINE = -lreadline -L/Users/${USER}/.brew/opt/readline/lib -I/Users/${USER}/.brew/opt/readline/include
 OBJS 	= ${SRCS:.c=.o}
 
 .c.o:

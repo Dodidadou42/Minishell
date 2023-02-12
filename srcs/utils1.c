@@ -65,6 +65,7 @@ int	ft_is_builtin(t_list *cmd)
 		|| !ft_strcmp((char *)cmd->content, "export")
 		|| !ft_strcmp((char *)cmd->content, "unset")
 		|| !ft_strcmp((char *)cmd->content, "env")
+		|| !ft_strcmp((char *)cmd->content, "history")
 		|| !ft_strcmp((char *)cmd->content, "exit"))
 		return (1);
 	return (0);

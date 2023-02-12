@@ -28,6 +28,7 @@ t_var	*ft_init_var(char **envp)
 	v->path = NULL;
 	v->line = NULL;
 	v->pipeline_exit_status = 1;
+	v->histo = NULL;
 	return (v);
 }
 
@@ -53,7 +54,7 @@ int	main(int argc, char **argv, char **envp)
 	v = ft_init_var(envp);
 	while (1)
 	{
-		v->line = ft_read_command(v->line);
+		v->line = ft_read_command(v->line, v);
 		v->fd_cmd = ft_set_fd_cmd();
 		v->pipe_start = -1;
 		v->pipe_count = 0;
@@ -61,6 +62,7 @@ int	main(int argc, char **argv, char **envp)
 		if (v->line && v->line[0])
 			ft_execution(v, v->fd_cmd);
 		ft_free_var(v);
+		//print_history(v->histo);
 	}
 	return (0);
 }
