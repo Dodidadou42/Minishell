@@ -17,7 +17,7 @@ void	ft_exec_builtin(t_var *v, t_list *cmd, t_list *env)
 	if (!ft_strcmp((char *)cmd->content, "echo"))
 		ft_echo(cmd->next);
 	else if (!ft_strcmp((char *)cmd->content, "history"))
-		ft_history(v, v->histo, cmd->next);
+		ft_history(v, cmd->next);
 	else if (!ft_strcmp((char *)cmd->content, "cd"))
 		ft_cd(v, cmd->next, env);
 	else if (!ft_strcmp((char *)cmd->content, "pwd"))

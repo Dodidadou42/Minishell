@@ -63,8 +63,7 @@ typedef struct s_var
 //global variable
 //t_var	g_v;
 
-
-void rl_clear_history (void);
+void	rl_clear_history (void);
 //parsing
 char	*ft_read_command(char *ret, t_var *v);
 char	*ft_get_word(t_var *v, char *line, int *i);
@@ -91,8 +90,8 @@ void	ft_execution(t_var *v, t_list *fd_cmd);
 //signal
 void	ft_sig_handler(int signal);
 //history
-void	ft_history(t_var *v, t_histo *histo, t_list *cmd);
-void    ft_get_history(char *line, t_var *v);
+void	ft_history(t_var *v, t_list *cmd);
+void	ft_get_history(char *line, t_var *v);
 //utils
 char	**ft_lst_to_strtab(t_list *lst);
 int		ft_count_char(char *s, char c);

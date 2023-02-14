@@ -62,7 +62,6 @@ int	main(int argc, char **argv, char **envp)
 		if (v->line && v->line[0])
 			ft_execution(v, v->fd_cmd);
 		ft_free_var(v);
-		//print_history(v->histo);
 	}
 	return (0);
 }
