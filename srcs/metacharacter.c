@@ -32,47 +32,23 @@ int	ft_handle_pipe(t_var *v, char *line, int *i)
 	return (1);
 }
 
-void clear_stdin_buffer(void)
-{
-    char buffer[1024];
-    int n;
-
-    // Lit les données dans le buffer jusqu'à ce que le buffer soit vide
-    while ((n = read(STDIN_FILENO, buffer, 1024)) > 0) {
-        // Ne fait rien avec les données lues
-    }
-}
-
 void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 {
 	char	*limiter;
 	char	*tmp;
-	char	*rl;
 	int		fd_pipe[2];
 
 	*i += 2;
 	while (line[*i] && ft_iswspace(line[*i]))
 		++(*i);
 	limiter = ft_strjoin_free(ft_get_word(v, line, i), "\n", 1);
-	rl = readline("> ");
-	if (!rl)
-	{
-		free(limiter);
-		return ;
-	}
-	tmp = ft_strjoin_free(rl, "\n", 1);
+	tmp = ft_strjoin_free(readline("> "), "\n", 1);
 	pipe(fd_pipe);
 	while (ft_strcmp(tmp, limiter))
 	{
 		ft_putstr_fd(tmp, fd_pipe[1]);
-		rl = readline("> ");
 		free(tmp);
-		if (!rl)
-		{
-			free(limiter);
-			return ;
-		}
-		tmp = ft_strjoin_free(rl, "\n", 1);
+		tmp = ft_strjoin_free(readline("> "), "\n", 1);
 	}
 	close(fd_pipe[1]);
 	free(tmp);

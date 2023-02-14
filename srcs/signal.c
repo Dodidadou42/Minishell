@@ -30,17 +30,10 @@ void	ft_handle_ctrl_slash(int signal)
 void	ft_init_signals(void)
 {
 	struct termios	new;
-	struct sigaction ctrl_c;
 
 	tcgetattr(0, &new);
 	new.c_lflag &= ~ECHOCTL;
 	tcsetattr(0, 0, &new);
-	//signal(SIGINT, ft_handle_ctrl_c);
-	
-    ctrl_c.sa_handler = ft_handle_ctrl_c;
-    sigemptyset(&ctrl_c.sa_mask);
-    ctrl_c.sa_flags = 0;
-    sigaction(SIGINT, &ctrl_c, NULL);
-
+	signal(SIGINT, ft_handle_ctrl_c);
 	signal(SIGQUIT, ft_handle_ctrl_slash);
 }
