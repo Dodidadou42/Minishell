@@ -17,11 +17,14 @@ char	*ft_read_command(char *ret, t_var *v)
 	if (ret)
 		free(ret);
 	ret = readline("minishell$> ");
-
+	if (!ret)
+		exit(0);
 	while (!ret[0])
 	{
 		free(ret);
 		ret = readline("minishell$> ");
+		if (!ret)
+			exit(0);
 	}
 	add_history(ret);
 	ft_get_history(ret, v);

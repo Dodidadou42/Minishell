@@ -29,6 +29,7 @@ t_var	*ft_init_var(char **envp)
 	v->line = NULL;
 	v->pipeline_exit_status = 1;
 	v->histo = NULL;
+	ft_init_signals();
 	return (v);
 }
 
@@ -51,6 +52,7 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
+	
 	v = ft_init_var(envp);
 	while (1)
 	{

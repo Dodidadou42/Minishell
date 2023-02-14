@@ -27,6 +27,7 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 # include "libft/libft.h"
+# include <termios.h>
 
 
 # define STDIN 0
@@ -62,8 +63,8 @@ typedef struct s_var
 
 //global variable
 //t_var	g_v;
-
 void	rl_clear_history (void);
+void	rl_replace_line (const char *text, int clear_undo);
 //parsing
 char	*ft_read_command(char *ret, t_var *v);
 char	*ft_get_word(t_var *v, char *line, int *i);
@@ -88,7 +89,9 @@ void	ft_env(t_list *env);
 void	ft_exec_builtin(t_var *v, t_list *cmd, t_list *env);
 void	ft_execution(t_var *v, t_list *fd_cmd);
 //signal
-void	ft_sig_handler(int signal);
+void	ft_init_signals(void);
+void	ft_handle_ctrl_c(int signal);
+void	ft_handle_ctrl_slash(int signal);
 //history
 void	ft_history(t_var *v, t_list *cmd);
 void	ft_get_history(char *line, t_var *v);
