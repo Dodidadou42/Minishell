@@ -32,28 +32,57 @@ int	ft_handle_pipe(t_var *v, char *line, int *i)
 	return (1);
 }
 
+
+void	child_heredoc(t_var *v, char *limiter, int fd_cmd[2], int fd_pipe[2])
+{
+	char	*tmp;
+
+	v->ctrlc.sa_handler = ft_handle_ctrl_c_heredoc;
+	sigaction(SIGINT, &v->ctrlc, NULL);
+	if (!get_next_line_heredoc(&tmp))
+	{
+		close(fd_pipe[1]);
+		free(limiter);
+		fd_cmd[0] = fd_pipe[0];
+		return ;
+	}
+	pipe(fd_pipe);
+	while (ft_strcmp(tmp, limiter))
+	{
+		ft_putstr_fd(tmp, fd_pipe[1]);
+		if (!get_next_line_heredoc(&tmp))
+			break ;
+	}
+	close(fd_pipe[1]);
+	free(limiter);
+	fd_cmd[0] = fd_pipe[0];
+}
+
 void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 {
 	char	*limiter;
-	char	*tmp;
 	int		fd_pipe[2];
+	int		pid;
 
 	*i += 2;
 	while (line[*i] && ft_iswspace(line[*i]))
 		++(*i);
 	limiter = ft_strjoin_free(ft_get_word(v, line, i), "\n", 1);
-	tmp = ft_strjoin_free(readline("> "), "\n", 1);
-	pipe(fd_pipe);
-	while (ft_strcmp(tmp, limiter))
+	pid = fork();
+	if (pid == 0)
 	{
-		ft_putstr_fd(tmp, fd_pipe[1]);
-		free(tmp);
-		tmp = ft_strjoin_free(readline("> "), "\n", 1);
+		child_heredoc(v, limiter, fd_cmd, fd_pipe);
+		exit(0);
 	}
-	close(fd_pipe[1]);
-	free(tmp);
-	free(limiter);
-	fd_cmd[0] = fd_pipe[0];
+	else
+	{
+		v->ctrlc.sa_handler = do_nothing;
+		sigaction(SIGINT, &v->ctrlc, NULL);
+		waitpid(pid, NULL, 0);
+		v->ctrlc.sa_handler = ft_handle_ctrl_c;
+		sigaction(SIGINT, &v->ctrlc, NULL);
+		free(limiter);
+	}
 }
 
 int	ft_get_fd_cmd(t_var *v, int fd_cmd[2], char *line, int *i)

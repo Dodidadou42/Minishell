@@ -29,7 +29,7 @@ t_var	*ft_init_var(char **envp)
 	v->line = NULL;
 	v->pipeline_exit_status = 1;
 	v->histo = NULL;
-	ft_init_signals();
+	ft_init_signals(v);
 	return (v);
 }
 
@@ -64,6 +64,7 @@ int	main(int argc, char **argv, char **envp)
 		if (v->line && v->line[0])
 			ft_execution(v, v->fd_cmd);
 		ft_free_var(v);
+
 	}
 	return (0);
 }

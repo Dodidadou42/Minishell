@@ -59,10 +59,12 @@ typedef struct s_var
 	int		pipe_start;
 	int		pipe_count;
 	int		pipeline_exit_status;
+
+	struct sigaction ctrlc;
 }				t_var;
 
 //global variable
-//t_var	g_v;
+
 void	rl_clear_history (void);
 void	rl_replace_line (const char *text, int clear_undo);
 //parsing
@@ -89,9 +91,11 @@ void	ft_env(t_list *env);
 void	ft_exec_builtin(t_var *v, t_list *cmd, t_list *env);
 void	ft_execution(t_var *v, t_list *fd_cmd);
 //signal
-void	ft_init_signals(void);
+void	ft_init_signals(t_var *v);
 void	ft_handle_ctrl_c(int signal);
 void	ft_handle_ctrl_slash(int signal);
+void	ft_handle_ctrl_c_heredoc(int signal);
+void	do_nothing(int signal);
 //history
 void	ft_history(t_var *v, t_list *cmd);
 void	ft_get_history(char *line, t_var *v);
@@ -101,6 +105,8 @@ int		ft_count_char(char *s, char c);
 char	*ft_getenv(t_list *env, char *name);
 int		ft_is_builtin(t_list *cmd);
 char	*ft_get_path(t_list *env, char *cmd);
+void	ft_free_var(t_var *v);
+int		get_next_line_heredoc(char **line);
 //errors
 int		ft_parsing_error(t_var *v, char *token);
 int		ft_exec_error(t_var *v, char *cause, char *error, int status);
