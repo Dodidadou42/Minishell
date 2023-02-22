@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 11:45:18 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/10 15:27:01 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/21 21:24:35 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ int	ft_handle_pipe(t_var *v, char *line, int *i)
 	ft_lstadd_back(&v->fd_cmd, ft_set_fd_cmd());
 	return (1);
 }
-
 
 void	child_heredoc(t_var *v, char *limiter, int fd_cmd[2], int fd_pipe[2])
 {

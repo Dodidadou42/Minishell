@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:35:45 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/11 10:20:58 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/22 14:59:11 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ void	ft_get_env_var(t_list *env, char *line, char *word, int *i[2])
 		}
 		env = env->next;
 	}
+	if (!len)
+		word[(*i[1])++] = '$';
 	*i[0] += (len + 1);
 }
 
@@ -83,13 +85,15 @@ char	*ft_get_word(t_var *v, char *line, int *i)
 	char	*word;
 	int		j;
 
-	word = malloc(sizeof(char) * (ft_word_len(v->env,
+	word = malloc(sizeof(char) * (ft_word_len(v, v->env,
 					ft_strdup(&line[*i])) + 1));
 	j = 0;
 	while (line[*i])
 	{
 		if (line[*i] == '\'' || line[*i] == '\"')
 			ft_get_quote(v->env, line, word, (int *[]){i, &j});
+		else if (!ft_strncmp(&line[*i], "$?", 2))
+			ft_pipeline_exit_status(v, word, (int *[]){i, &j});
 		else if (line[*i] == '$' && line[*i + 1] && !ft_iswspace(line[*i + 1]))
 			ft_get_env_var(v->env, &line[*i], word, (int *[]){i, &j});
 		else if (!ft_strchr(" |<>", line[*i]))

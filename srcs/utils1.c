@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:18:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/10 01:45:04 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/22 17:42:14 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,9 @@ int	ft_is_builtin(t_list *cmd)
 		|| !ft_strcmp((char *)cmd->content, "unset")
 		|| !ft_strcmp((char *)cmd->content, "env")
 		|| !ft_strcmp((char *)cmd->content, "history")
-		|| !ft_strcmp((char *)cmd->content, "exit"))
+		|| !ft_strcmp((char *)cmd->content, "exit")
+		|| (ft_strchr((char *)cmd->content, '=')
+			&& ft_check_export(NULL, (char *)cmd->content)))
 		return (1);
 	return (0);
 }

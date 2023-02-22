@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:56:29 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/10 15:20:27 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/22 14:41:56 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ t_var	*ft_init_var(char **envp)
 
 	v = malloc(sizeof(t_var));
 	v->env = NULL;
+	v->export = NULL;
 	if (envp[0])
 	{
 		i = -1;
@@ -27,7 +28,7 @@ t_var	*ft_init_var(char **envp)
 	}
 	v->path = NULL;
 	v->line = NULL;
-	v->pipeline_exit_status = 1;
+	v->pipeline_exit_status = ft_itoa(1);
 	v->histo = NULL;
 	ft_init_signals(v);
 	return (v);
@@ -52,7 +53,6 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	
 	v = ft_init_var(envp);
 	while (1)
 	{
@@ -64,7 +64,6 @@ int	main(int argc, char **argv, char **envp)
 		if (v->line && v->line[0])
 			ft_execution(v, v->fd_cmd);
 		ft_free_var(v);
-
 	}
 	return (0);
 }
@@ -96,4 +95,4 @@ int	main(int argc, char **argv, char **envp)
 			int *fdd = (int *)tmp->content;
 			printf("%d: fd[0] = %d\tfd[1] = %d\n", i++, fdd[0], fdd[1]);
 			tmp = tmp->next;
-		}//////////////////////////////////////////////////////////////////*/
+		}////////////////////////////////////////////////////////////////////*/

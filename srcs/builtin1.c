@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 01:35:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/10 01:15:15 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/21 21:50:02 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,27 @@ void	ft_env(t_list *env)
 		ft_putstr_fd((char *)env->content, STDOUT);
 		ft_putchar_fd('\n', STDOUT);
 		env = env->next;
+	}
+}
+
+void	ft_unset(t_list *cmd, t_list *env)
+{
+	t_list	*prev;
+	char	*tmp;
+	int		len;
+
+	tmp = ft_strjoin((char *)cmd->content, "=");
+	len = ft_strlen(tmp);
+	while (env && ft_strncmp(tmp, (char *)env->content, len))
+	{
+		prev = env;
+		env = env->next;
+	}
+	free(tmp);
+	if (env)
+	{
+		prev->next = prev->next->next;
+		free(env->content);
+		free(env);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 18:59:08 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/11 10:21:22 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/22 14:59:03 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ int	ft_env_var_len(t_list *env, char *name, int *i)
 		env = env->next;
 	}
 	*i += (len + 1);
+	if (!len)
+		return (1);
 	return (0);
 }
 
@@ -87,7 +89,7 @@ int	ft_quote_len(t_list *env, char *line, int *i)
 	return (len);
 }
 
-int	ft_word_len(t_list *env, char *line)
+int	ft_word_len(t_var *v, t_list *env, char *line)
 {
 	int	len;
 	int	i;
@@ -98,6 +100,8 @@ int	ft_word_len(t_list *env, char *line)
 	{
 		if (line[i] == '\'' || line[i] == '\"')
 			len += ft_quote_len(env, line, &i);
+		else if (!ft_strncmp(&line[i], "$?", 2))
+			len += ft_pipeline_exit_status(v, NULL, (int *[]){&i, NULL});
 		else if (line[i] == '$' && line[i + 1] && !ft_iswspace(line[i + 1]))
 			len += ft_env_var_len(env, &line[i], &i);
 		else if (!ft_strchr(" |<>", line[i]))

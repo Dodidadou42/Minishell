@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/01 02:11:22 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/11 10:05:04 by mpelazza         ###   ########.fr       */
+/*   Created: 2023/02/16 14:14:33 by mpelazza          #+#    #+#             */
+/*   Updated: 2023/02/22 18:00:33 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,75 +58,78 @@ void	ft_export_print(t_list *env)
 	ft_lstfree(&start);
 }
 
-// pas au point les checks je reviendai dessus plus tard
-
-int	ft_check_export(t_var *v, t_list *cmd)
+int	ft_check_export(t_var *v, char *cmd)
 {
-	char	*tmp;
 	int		i;
 
-	while (cmd)
+	i = -1;
+	if (!cmd[0] || cmd[0] == '=')
 	{
-		tmp = (char *)cmd->content;
-		i = -1;
-		if (!tmp[0] || tmp[0] == '=')
+		if (v)
+			ft_builtin_error(v, "export", cmd, "not a valid indentifier");
+		return (0);
+	}
+	while (cmd[++i] && cmd[i] != '=')
+	{
+		if (!ft_isalpha(cmd[i]) && cmd[i] != '_')
 		{
-			ft_builtin_error(v, "export", (char *)cmd->content,
-				"not a valid indentifier");
+			if (v)
+				ft_builtin_error(v, "export", cmd, "not a valid identifier");
 			return (0);
 		}
-		while (tmp[++i] && tmp[i] != '=')
-		{
-			if (!ft_isalpha(tmp[i]) && tmp[i] != '_')
-			{
-				ft_builtin_error(v, "export", (char *)cmd->content,
-					"not a valid identifier");
-				return (0);
-			}
-		}
-		cmd = cmd->next;
 	}
 	return (1);
 }
 
-void	ft_export(t_var *v, t_list *cmd, t_list *env)
+void	ft_export_set_var(t_list **env, char *cmd)
 {
 	t_list	*tmp;
+	int		len;
+
+	tmp = *env;
+	len = 0;
+	while (cmd[len] && cmd[len] != '=')
+		++len;
+	while (tmp)
+	{
+		if (!ft_strncmp(cmd, (char *)tmp->content, len))
+			break ;
+		tmp = tmp->next;
+	}
+	if (tmp)
+	{
+		free(tmp->content);
+		tmp->content = (void *)cmd;
+	}
+	else
+		ft_lstadd_back(env, ft_lstnew(cmd));
+}
+
+void	ft_export(t_var *v, t_list *cmd, t_list *env)
+{
+	char	*var;
 
 	if (!cmd)
 		ft_export_print(env);
 	while (cmd)
 	{
-		if (!ft_check_export(v, cmd))
-			break ;
+		if (!ft_check_export(v, (char *)cmd->content))
+		{
+			cmd = cmd->next;
+			continue ;
+		}
 		if (!ft_strchr((char *)cmd->content, '='))
-			cmd->content
-				= (void *)ft_strjoin_free((char *)cmd->content, "=", 1);
-		tmp = ft_lstlast(env);
-		ft_lstadd_back(&env, ft_lstnew((char *)tmp->content));
-		tmp->content = (void *)ft_strdup((char *)cmd->content);
+		{
+			var = ft_getenv(v->export, (char *)cmd->content);
+			if (var)
+			{
+				var = ft_strjoin_free(ft_strjoin((char *)cmd->content,
+							"="), var, 1);
+				ft_export_set_var(&env, var);
+			}
+		}
+		else
+			ft_export_set_var(&env, ft_strdup((char *)cmd->content));
 		cmd = cmd->next;
-	}
-}
-
-void	ft_unset(t_list *cmd, t_list *env)
-{
-	t_list	*prev;
-	char	*tmp;
-	int		len;
-
-	tmp = ft_strjoin((char *)cmd->content, "=");
-	len = ft_strlen(tmp);
-	while (env && ft_strncmp(tmp, (char *)env->content, len))
-	{
-		prev = env;
-		env = env->next;
-	}
-	free(tmp);
-	if (env)
-	{
-		prev->next = prev->next->next;
-		free(env->content);
-		free(env);
 	}
 }

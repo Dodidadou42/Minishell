@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/06 20:04:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/10 00:50:31 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/22 15:08:10 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,4 +90,17 @@ int	get_next_line_heredoc(char **line)
 	*line = buffer;
 	free(buffer);
 	return (r);
+}
+
+int	ft_pipeline_exit_status(t_var *v, char *word, int *i[2])
+{
+	int	j;
+
+	*i[0] += 2;
+	if (!word)
+		return (ft_strlen(v->pipeline_exit_status));
+	j = 0;
+	while (v->pipeline_exit_status[j])
+		word[(*i[1])++] = v->pipeline_exit_status[j++];
+	return (0);
 }

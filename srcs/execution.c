@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:48:12 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/11 10:05:15 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/22 17:54:57 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,12 @@ void	ft_exec_builtin(t_var *v, t_list *cmd, t_list *env)
 		system("leaks minishell");
 		exit(0);
 	}
+	while (cmd && ft_strchr((char *)cmd->content, '=')
+		&& ft_check_export(NULL, (char *)cmd->content))
+	{
+		ft_export_set_var(&v->export, ft_strdup((char *)cmd->content));
+		cmd = cmd->next;
+	}
 }
 
 void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
@@ -52,10 +58,13 @@ void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 	ft_split_free(args);
 	ft_split_free(envp);
 	ft_exec_error(v, (char *)cmd->content, "permission denied", 126);
+	exit(126);
 }
 
 void	ft_exec_process(t_var *v, t_list *cmd, int fd_pipe[2])
 {
+	int	status;
+
 	v->process = fork();
 	if (v->process == 0)
 	{
@@ -63,7 +72,12 @@ void	ft_exec_process(t_var *v, t_list *cmd, int fd_pipe[2])
 		ft_exec_cmd(v, cmd, ft_lst_to_strtab(cmd), ft_lst_to_strtab(v->env));
 	}
 	else
-		waitpid(v->process, NULL, 0);
+	{
+		waitpid(v->process, &status, 0);
+		status = ft_get_exit_code(status);
+		free(v->pipeline_exit_status);
+		v->pipeline_exit_status = ft_itoa(status);
+	}
 }
 
 int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
@@ -77,7 +91,8 @@ int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
 		dup2(fd_cmd[1], STDOUT);
 	else if (i + 1 <= v->pipe_count)
 		dup2(fd_pipe[1], STDOUT);
-	v->pipeline_exit_status = 0;
+	free(v->pipeline_exit_status);
+	v->pipeline_exit_status = ft_itoa(0);
 	if (v->cmd[i] && ft_is_builtin(v->cmd[i]))
 		ft_exec_builtin(v, v->cmd[i], v->env);
 	else if (v->cmd[i])
