@@ -73,7 +73,10 @@ void	ft_exec_process(t_var *v, t_list *cmd, int fd_pipe[2])
 	}
 	else
 	{
+		if (!ft_strcmp((char *)cmd->content, "cat"))
+			ft_change_ctrl_c_function(v, 3);
 		waitpid(v->process, &status, 0);
+		ft_change_ctrl_c_function(v, 1);
 		status = ft_get_exit_code(status);
 		free(v->pipeline_exit_status);
 		v->pipeline_exit_status = ft_itoa(status);

@@ -36,8 +36,7 @@ void	child_heredoc(t_var *v, char *limiter, int fd_cmd[2], int fd_pipe[2])
 {
 	char	*tmp;
 
-	v->ctrlc.sa_handler = ft_handle_ctrl_c_heredoc;
-	sigaction(SIGINT, &v->ctrlc, NULL);
+	ft_change_ctrl_c_function(v, 2);
 	if (!get_next_line_heredoc(&tmp))
 	{
 		close(fd_pipe[1]);
@@ -75,11 +74,9 @@ void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 	}
 	else
 	{
-		v->ctrlc.sa_handler = do_nothing;
-		sigaction(SIGINT, &v->ctrlc, NULL);
+		ft_change_ctrl_c_function(v, 4);
 		waitpid(pid, NULL, 0);
-		v->ctrlc.sa_handler = ft_handle_ctrl_c;
-		sigaction(SIGINT, &v->ctrlc, NULL);
+		ft_change_ctrl_c_function(v, 1);
 		free(limiter);
 	}
 }

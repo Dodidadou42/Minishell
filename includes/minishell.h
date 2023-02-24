@@ -93,10 +93,7 @@ void	ft_exec_builtin(t_var *v, t_list *cmd, t_list *env);
 void	ft_execution(t_var *v, t_list *fd_cmd);
 //signal
 void	ft_init_signals(t_var *v);
-void	ft_handle_ctrl_c(int signal);
-void	ft_handle_ctrl_slash(int signal);
-void	ft_handle_ctrl_c_heredoc(int signal);
-void	do_nothing(int signal);
+void	ft_change_ctrl_c_function(t_var *v, int n);
 //history
 void	ft_history(t_var *v, t_list *cmd);
 void	ft_get_history(char *line, t_var *v);

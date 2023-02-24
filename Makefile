@@ -3,8 +3,8 @@ NAME	= minishell
 SRCS	= srcs/minishell.c srcs/parsing.c srcs/parsing_utils.c	\
 		  srcs/metacharacter.c srcs/execution.c srcs/history1.c \
 		  srcs/history2.c srcs/builtin1.c srcs/builtin2.c \
-		  srcs/builtin3.c srcs/signal.c srcs/utils1.c \
-		  srcs/utils2.c srcs/errors.c
+		  srcs/builtin3.c srcs/signal.c srcs/signal2.c \
+		  srcs/utils1.c srcs/utils2.c srcs/errors.c
 
 CC		= gcc
 

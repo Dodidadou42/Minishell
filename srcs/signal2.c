@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   signal2.c                                           :+:      :+:    :+:  */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,42 +12,21 @@
 
 #include "../includes/minishell.h"
 
-void	ft_handle_ctrl_c(int signal)
+void	ft_handle_ctrl_slash(int signal)
 {	
 	(void)signal;
-	write(1, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
 	rl_redisplay();
 }
 
-void	ft_handle_ctrl_c_heredoc(int signal)
-{	
-	(void)signal;
-	write(1, "\n", 1);
-	exit(0);
-}
-
-void	ft_handle_ctrl_c_cat(int signal)
-{	
-	(void)signal;
-	write(1, "^C\n", 3);
-}
-
-void	do_nothing(int signal)
+void	ft_init_signals(t_var *v)
 {
-	(void)signal;
-}
+	struct termios	new;
 
-void	ft_change_ctrl_c_function(t_var *v, int n)
-{
-	if (n == 1)
-		v->ctrlc.sa_handler = ft_handle_ctrl_c;
-	else if (n == 2)
-		v->ctrlc.sa_handler = ft_handle_ctrl_c_heredoc;
-	else if (n == 3)
-		v->ctrlc.sa_handler = ft_handle_ctrl_c_cat;
-	else if (n == 4)
-		v->ctrlc.sa_handler = do_nothing;
-	sigaction(SIGINT, &v->ctrlc, NULL);
+	tcgetattr(0, &new);
+	new.c_lflag &= ~ECHOCTL;
+	tcsetattr(0, 0, &new);
+	signal(SIGQUIT, ft_handle_ctrl_slash);
+	sigemptyset(&v->ctrlc.sa_mask);
+	v->ctrlc.sa_flags = 0;
+    ft_change_ctrl_c_function(v, 1);
 }
