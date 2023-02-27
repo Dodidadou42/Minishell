@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:54:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/22 17:52:43 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/27 23:12:35 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,9 @@ void	ft_exec_builtin(t_var *v, t_list *cmd, t_list *env);
 void	ft_execution(t_var *v, t_list *fd_cmd);
 //signal
 void	ft_init_signals(t_var *v);
-void	ft_change_ctrl_c_function(t_var *v, int n);
+void	ft_handle_ctrl_c(int signal);
+void	ft_handle_ctrl_c_heredoc(int signal);
+void	do_nothing(int signal);
 //history
 void	ft_history(t_var *v, t_list *cmd);
 void	ft_get_history(char *line, t_var *v);
@@ -104,7 +106,7 @@ char	*ft_getenv(t_list *env, char *name);
 int		ft_is_builtin(t_list *cmd);
 char	*ft_get_path(t_list *env, char *cmd);
 void	ft_free_var(t_var *v);
-int		get_next_line_heredoc(char **line);
+char	*gnl_heredoc(void);
 int		ft_pipeline_exit_status(t_var *v, char *word, int *i[2]);
 
 //errors

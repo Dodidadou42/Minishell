@@ -1,0 +1,25 @@
+J'ai refait le heredoc pcq il marcher pas genre l'affichage etait bon et le systeme de signals aussi mais
+tu fesais le pipe dans le process donc aucune chance de le recuperer en dehors, pareille pour l'assignation de fd_cmd
+donc en gros apres l'entree etait forcement vide
+
+J'ai revu le truc de pipe pour avoir les pipes qui se lancents en meme temps et qui sont wait en meme temps ensuite
+donc la ca fait vraiment comme le shell avec genre wc | ls, cat /dev/urandom | cat, cat /dev/urandom | wc , etc
+juste pour le cat ca fonctionne aussi mais je crois bien que faut faire une regle special pour cat pcq
+dans bash faut juste appuyer sur entree et tu recupere le prompt et j'ai pas trouver d'autre commande qui fait la meme chose
+donc encore a faire
+
+J'ai vite fait modifier les signals pour que le truc de cat marche aussi avec les commandes dans le meme genre comme wc
+et j'ai remagner vite fait pour avoir un seul fichier dcp
+
+cat | cat --> OK
+
+cat | cat | ls (-> testé dans la correction) 
+--> Comme j'ai dit en haut, le ls s'affiche ensuite le cat se lance mais il faut faire un truc special pour lui
+
+Quand on lance minishell depuis minishell il devient fou mais je pense c'est normal 
+
+Gérer le fait qu'on peut créer des variable en mode : SALUT=wsh, puis export
+--> Ca marche deja ca c'est quand il ya deja la variable faut modifier direct genre sans export apres, je vais m'en occuper
+
+
+C'est a peu près tout ce qui me vient la

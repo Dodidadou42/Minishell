@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 11:45:18 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/21 21:24:35 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/27 23:23:50 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,53 +32,52 @@ int	ft_handle_pipe(t_var *v, char *line, int *i)
 	return (1);
 }
 
-void	child_heredoc(t_var *v, char *limiter, int fd_cmd[2], int fd_pipe[2])
+void	ft_heredoc_process(t_var *v, char *limiter, int fd_pipe[2])
 {
 	char	*tmp;
+	pid_t	pid;
 
-	ft_change_ctrl_c_function(v, 2);
-	if (!get_next_line_heredoc(&tmp))
+	pid = fork();
+	if (pid == 0)
+	{
+		close(fd_pipe[0]);
+		v->ctrlc.sa_handler = ft_handle_ctrl_c_heredoc;
+		sigaction(SIGINT, &v->ctrlc, NULL);
+		tmp = ft_strjoin_free(readline("> "), "\n", 1);
+		while (ft_strcmp(tmp, limiter))
+		{
+			ft_putstr_fd(tmp, fd_pipe[1]);
+			free(tmp);
+			tmp = ft_strjoin_free(readline("> "), "\n", 1);
+		}
+		free(tmp);
+		free(limiter);
+		exit(0);
+	}
+	else
 	{
 		close(fd_pipe[1]);
-		free(limiter);
-		fd_cmd[0] = fd_pipe[0];
-		return ;
+		waitpid(pid, NULL, 0);
 	}
-	pipe(fd_pipe);
-	while (ft_strcmp(tmp, limiter))
-	{
-		ft_putstr_fd(tmp, fd_pipe[1]);
-		if (!get_next_line_heredoc(&tmp))
-			break ;
-	}
-	close(fd_pipe[1]);
-	free(limiter);
-	fd_cmd[0] = fd_pipe[0];
 }
 
 void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 {
 	char	*limiter;
 	int		fd_pipe[2];
-	int		pid;
 
 	*i += 2;
 	while (line[*i] && ft_iswspace(line[*i]))
 		++(*i);
 	limiter = ft_strjoin_free(ft_get_word(v, line, i), "\n", 1);
-	pid = fork();
-	if (pid == 0)
-	{
-		child_heredoc(v, limiter, fd_cmd, fd_pipe);
-		exit(0);
-	}
-	else
-	{
-		ft_change_ctrl_c_function(v, 4);
-		waitpid(pid, NULL, 0);
-		ft_change_ctrl_c_function(v, 1);
-		free(limiter);
-	}
+	pipe(fd_pipe);
+	v->ctrlc.sa_handler = do_nothing;
+	sigaction(SIGINT, &v->ctrlc, NULL);
+	ft_heredoc_process(v, limiter, fd_pipe);
+	v->ctrlc.sa_handler = ft_handle_ctrl_c;
+	sigaction(SIGINT, &v->ctrlc, NULL);
+	free(limiter);
+	fd_cmd[0] = fd_pipe[0];
 }
 
 int	ft_get_fd_cmd(t_var *v, int fd_cmd[2], char *line, int *i)

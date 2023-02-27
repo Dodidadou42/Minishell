@@ -1,5 +1,0 @@
-cat | cat
-cat | cat | ls (-> testé dans la correction)
-Quand on lance minishell depuis minishell il devient fou mais je pense c'est normal
-Gérer le fait qu'on peut créer des variable en mode : SALUT=wsh, puis export
-C'est a peu près tout ce qui me vient la

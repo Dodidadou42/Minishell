@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/06 20:04:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/22 15:08:10 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/02/27 22:55:01 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,34 +62,6 @@ char	*ft_get_metachar(char *line, int *i)
 		return ("<");
 	}
 	return (NULL);
-}
-
-int	get_next_line_heredoc(char **line)
-{
-	char	*buffer;
-	int		i;
-	int		r;
-	char	c;
-
-	i = 0;
-	r = 0;
-	write(1, "> ", 2);
-	buffer = (char *)malloc(10000);
-	if (!buffer)
-		return (-1);
-	r = read(0, &c, 1);
-	while (r && c != '\n' && c != '\0')
-	{
-		if (c != '\n' && c != '\0')
-			buffer[i] = c;
-		i++;
-		r = read(0, &c, 1);
-	}
-	buffer[i] = '\n';
-	buffer[++i] = '\0';
-	*line = buffer;
-	free(buffer);
-	return (r);
 }
 
 int	ft_pipeline_exit_status(t_var *v, char *word, int *i[2])
