@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 11:45:18 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/27 23:23:50 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/01 21:29:02 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ int	ft_get_fd_cmd(t_var *v, int fd_cmd[2], char *line, int *i)
 	{
 		ft_exec_error(v, filename, NULL, 1);
 		v->pipe_start = v->pipe_count;
+		while (line[*i] && line[*i] != '|')
+			++(*i);
 	}
 	free(filename);
 	return (0);

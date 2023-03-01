@@ -1,3 +1,5 @@
+!!!!!! DANS LE MAKEFILE J'AI MIT EN COMMENTAIRE LE REPETOIRE DE READLINE PCQ LE MIEN EST DIFFERENT, PENSE A REMETTRE
+
 J'ai refait le heredoc pcq il marcher pas genre l'affichage etait bon et le systeme de signals aussi mais
 tu fesais le pipe dans le process donc aucune chance de le recuperer en dehors, pareille pour l'assignation de fd_cmd
 donc en gros apres l'entree etait forcement vide
@@ -34,9 +36,11 @@ cd /etc, cd /var.. 		faut voir sur les ordi de lecole mais moi ca m'envoie dans 
 unset HOME puis cd		faut mettre un message d'erreur ("minishell: cd: HOME not set" (exit code = 1)
 						relou pcq si on unset HOME et cd on doit avoir ca mais si cd ~ ca doit marcher sans HOME,
 						 pour l'instant ca segfault les deux, peux etre mettre char *root dans v au lancement comme ca meme si c'est unset
-						 on l'aura toujours pour cd ~ je te laisse voir
+						 on l'aura toujours pour cd ~ faut voir
 
 cd path | cmd			Le dossier ne dois pas changer si cd n'est pas la derniere commande utiliser (aucun pipe derriere)
+						on peux utiliser v->pipe_count et v->pipe_start
+						edit : faut aussi faire ca avec export donc je le ferai quand je ferai le truc de export plus haut
 
 $OLDPWD					A chaque cd il faut set le repertoire acuelle dans la variable OLDPWD (Elle peux ne pas deja exister si il n'y a eu aucun cd)
 
@@ -50,3 +54,4 @@ Acutaliser $SHLVL= (avec 1 de base 2 si on rentre dans un script 3 si ce script 
 Export
 -----------
 export sans arguments doit print les valeurs pas encore export ou qui ont pas de valeurs je me suis compris
+OLDPWD doit etre dans ces valeurs si il est pas encore set (lancement)
