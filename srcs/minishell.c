@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:56:29 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/27 18:10:00 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/01 17:29:18 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,9 @@ int	main(int argc, char **argv, char **envp)
 		v->pipe_start = -1;
 		v->pipe_count = 0;
 		v->cmd = ft_parse_command(v);
-		if (v->line && v->line[0])
+		free(v->pipeline_exit_status);
+		v->pipeline_exit_status = ft_itoa(0);
+		if (v->line && v->line[0] && v->cmd[0])
 			ft_execution(v, v->fd_cmd);
 		ft_free_var(v);
 	}

@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:14:33 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/22 18:00:33 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/01 21:08:36 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,13 @@ void	ft_export_print(t_list *env)
 	{
 		tmp = (char *)env_cpy->content;
 		i = -1;
-		ft_putstr_fd("declare x ", STDOUT);
+		ft_putstr_fd("declare -x ", STDOUT);
 		while (tmp[++i] != '=')
 			ft_putchar_fd(tmp[i], STDOUT);
-		if (tmp[i + 1])
-			while (tmp[i])
-				ft_putchar_fd(tmp[i++], STDOUT);
+		ft_putstr_fd("=\"", STDOUT);
+		while (tmp[++i])
+			ft_putchar_fd(tmp[i], STDOUT);
+		ft_putchar_fd('\"', STDOUT);
 		ft_putchar_fd('\n', STDOUT);
 		env_cpy = env_cpy->next;
 	}
@@ -63,15 +64,16 @@ int	ft_check_export(t_var *v, char *cmd)
 	int		i;
 
 	i = -1;
-	if (!cmd[0] || cmd[0] == '=')
+	if (!cmd[0] || cmd[0] == '='
+		|| (cmd[1] && !ft_isalpha(cmd[1]) && cmd[1] != '_'))
 	{
 		if (v)
-			ft_builtin_error(v, "export", cmd, "not a valid indentifier");
+			ft_builtin_error(v, "export", cmd, "not a valid identifier");
 		return (0);
 	}
 	while (cmd[++i] && cmd[i] != '=')
 	{
-		if (!ft_isalpha(cmd[i]) && cmd[i] != '_')
+		if (!ft_isalnum(cmd[i]) && cmd[i] != '_')
 		{
 			if (v)
 				ft_builtin_error(v, "export", cmd, "not a valid identifier");
@@ -129,7 +131,7 @@ void	ft_export(t_var *v, t_list *cmd, t_list *env)
 			}
 		}
 		else
-			ft_export_set_var(&env, ft_strdup((char *)cmd->content));
+			ft_export_set_var(&v->export, ft_strdup((char *)cmd->content));
 		cmd = cmd->next;
 	}
 }

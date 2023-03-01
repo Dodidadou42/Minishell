@@ -12,7 +12,8 @@ CFLAGS	= -Wall -Wextra -Werror
 
 LIBFT	= -Lincludes/libft -lft
 
-READLINE = -lreadline -L/Users/${USER}/.brew/opt/readline/lib -I/Users/${USER}/.brew/opt/readline/include
+READLINE = -lreadline -L/usr/local/opt/readline/lib -I//usr/local/opt/readline/include
+#READLINE = -lreadline -L/Users/${USER}/.brew/opt/readline/lib -I/Users/${USER}/.brew/opt/readline/include
 OBJS 	= ${SRCS:.c=.o}
 
 .c.o:
