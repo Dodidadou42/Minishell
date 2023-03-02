@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 18:59:08 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/22 14:59:03 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/01 17:37:37 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,12 @@ int	ft_env_var_name_len(char *name)
 	int	swp;
 	int	len;
 
+	if (name[1] && (name[1] == '\'' || name[1] == '\"'))
+		return (-1);
+	else if (name[1] && ft_isdigit(name[1]))
+		return (-2);
 	i = 1;
-	while (name[i] && (ft_isalpha(name[i]) || name[i] == '_'))
+	while (name[i] && (ft_isalnum(name[i]) || name[i] == '_'))
 		++i;
 	swp = name[i];
 	name[i] = '\0';
@@ -44,6 +48,11 @@ int	ft_env_var_len(t_list *env, char *name, int *i)
 	int		len;
 
 	len = ft_env_var_name_len(name);
+	if (len < 0)
+	{
+		*i -= len;
+		return (0);
+	}
 	while (env)
 	{
 		tmp = (char *)env->content;

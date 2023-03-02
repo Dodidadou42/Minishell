@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 06:47:05 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/21 21:23:55 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/01 09:21:08 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void	ft_cd(t_var *v, t_list *cmd, t_list *env)
 		free(path);
 		path = ft_strjoin(root, (char *)cmd->content + 1);
 	}
-	else if (path[0] == '~' && ft_strlen(path) == 1)
+	else if (path[0] == '~' && !path[1])
 	{
 		free(path);
 		path = ft_strdup(root);

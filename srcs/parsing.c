@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:35:45 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/22 14:59:11 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/01 19:29:44 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@ char	*ft_read_command(char *ret, t_var *v)
 {
 	if (ret)
 		free(ret);
-	//v->ctrlc.sa_handler = ft_handle_ctrl_c;
-	//sigaction(SIGINT, &v->ctrlc, NULL);
 	ret = readline("minishell$> ");
 	if (!ret)
 		exit(0);
@@ -37,28 +35,32 @@ void	ft_get_env_var(t_list *env, char *line, char *word, int *i[2])
 {
 	char	*tmp;
 	int		len;
-	int		j;
 
 	len = ft_env_var_name_len(line);
+	if (len < 0)
+	{
+		*i[0] -= len;
+		return ;
+	}
 	while (env)
 	{
 		tmp = (char *)env->content;
 		if (!ft_strncmp(&line[1], tmp, len) && tmp[len] == '=')
 		{
-			j = len + 1;
-			while (tmp[j])
-				word[(*i[1])++] = tmp[j++];
 			*i[0] += (len + 1);
+			len += 1;
+			while (tmp[len])
+				word[(*i[1])++] = tmp[len++];
 			return ;
 		}
 		env = env->next;
 	}
-	if (!len)
-		word[(*i[1])++] = '$';
 	*i[0] += (len + 1);
+	if (!len)
+			word[(*i[1])++] = '$';
 }
 
-void	ft_get_quote(t_list *env, char *line, char *word, int *i[2])
+void	ft_get_quote(t_var *v, char *line, char *word, int *i[2])
 {
 	char	type;
 
@@ -72,9 +74,11 @@ void	ft_get_quote(t_list *env, char *line, char *word, int *i[2])
 	*i[0] += 1;
 	while (line[*i[0]])
 	{
-		if (line[*i[0]] == '$' && line[*i[0] + 1]
+		if (!ft_strncmp(&line[*i[0]], "$?", 2) && type == '\"')
+			ft_pipeline_exit_status(v, word, (int *[]){i[0], i[1]});
+		else if (line[*i[0]] == '$' && line[*i[0] + 1]
 			&& !ft_iswspace(line[*i[0] + 1]) && type == '\"')
-			ft_get_env_var(env, &line[*i[0]], word, (int *[]){i[0], i[1]});
+			ft_get_env_var(v->env, &line[*i[0]], word, (int *[]){i[0], i[1]});
 		else
 			word[(*i[1])++] = line[(*i[0])++];
 	}
@@ -87,13 +91,12 @@ char	*ft_get_word(t_var *v, char *line, int *i)
 	char	*word;
 	int		j;
 
-	word = malloc(sizeof(char) * (ft_word_len(v, v->env,
-					ft_strdup(&line[*i])) + 1));
+	word = malloc(ft_word_len(v, v->env, ft_strdup(&line[*i])) + 1);
 	j = 0;
 	while (line[*i])
 	{
 		if (line[*i] == '\'' || line[*i] == '\"')
-			ft_get_quote(v->env, line, word, (int *[]){i, &j});
+			ft_get_quote(v, line, word, (int *[]){i, &j});
 		else if (!ft_strncmp(&line[*i], "$?", 2))
 			ft_pipeline_exit_status(v, word, (int *[]){i, &j});
 		else if (line[*i] == '$' && line[*i + 1] && !ft_iswspace(line[*i + 1]))
@@ -104,12 +107,18 @@ char	*ft_get_word(t_var *v, char *line, int *i)
 			break ;
 	}
 	word[j] = '\0';
+	if (!word[0])
+	{
+		free(word);
+		return (NULL);
+	}
 	return (word);
 }
 
 t_list	**ft_parse_command(t_var *v)
 {
 	t_list	**cmd;
+	char	*tmp;
 	int		i;
 
 	cmd = malloc(sizeof(t_list *) * ((ft_count_char(v->line, '|')) + 2));
@@ -124,8 +133,11 @@ t_list	**ft_parse_command(t_var *v)
 			if (ft_handle_metachar(v, v->line, &i) == 1)
 				cmd[++(v->pipe_count)] = NULL;
 			else if (v->line[i] && !ft_iswspace(v->line[i]))
-				ft_lstadd_back(&cmd[v->pipe_count],
-					ft_lstnew(ft_get_word(v, v->line, &i)));
+			{
+				tmp = ft_get_word(v, v->line, &i);
+				if (tmp)
+					ft_lstadd_back(&cmd[v->pipe_count], ft_lstnew(tmp));
+			}
 		}
 	}
 	return (cmd);

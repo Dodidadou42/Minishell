@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:48:12 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/27 23:44:19 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/01 21:09:06 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,13 +80,30 @@ int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
 		if (v->process == 0)
 		{
 			close(fd_pipe[0]);
-			ft_exec_cmd(v, v->cmd[i], ft_lst_to_strtab(v->cmd[i]), ft_lst_to_strtab(v->env));
+			ft_exec_cmd(v, v->cmd[i], ft_lst_to_strtab(v->cmd[i]),
+				ft_lst_to_strtab(v->env));
 		}
 	}
 	close(fd_pipe[1]);
 	dup2(std_save[0], STDIN);
 	dup2(std_save[1], STDOUT);
 	return (fd_pipe[0]);
+}
+
+void	ft_finish_execution(t_var *v, int std_save[2])
+{
+	int	status;
+
+	waitpid(v->process, &status, 0);
+	while (wait(NULL) > 0)
+		continue ;
+	close(std_save[0]);
+	close(std_save[1]);
+	if (!ft_is_builtin(v->cmd[v->pipe_start - 1]))
+	{
+		free(v->pipeline_exit_status);
+		v->pipeline_exit_status = ft_itoa(ft_get_exit_code(status));
+	}
 }
 
 void	ft_execution(t_var *v, t_list *fd_cmd)
@@ -113,9 +130,5 @@ void	ft_execution(t_var *v, t_list *fd_cmd)
 		else
 			close(fd_pipe_out);
 	}
-	waitpid(v->process, NULL, 0); // Faire une fonction pour recuperer le status wait et meme en close en vrai
-	while (wait(NULL) > 0)
-		continue ;
-	close(std_save[0]);
-	close(std_save[1]);
+	ft_finish_execution(v, std_save);
 }
