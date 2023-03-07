@@ -101,8 +101,8 @@ void	ft_finish_execution(t_var *v, int std_save[2])
 	close(std_save[1]);
 	if (!ft_is_builtin(v->cmd[v->pipe_start - 1]))
 	{
-		free(v->pipeline_exit_status);
-		v->pipeline_exit_status = ft_itoa(ft_get_exit_code(status));
+		free(v->strings->pipeline_exit_status);
+		v->strings->pipeline_exit_status = ft_itoa(ft_get_exit_code(status));
 	}
 }
 

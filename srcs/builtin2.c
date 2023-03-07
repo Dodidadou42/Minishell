@@ -1,111 +1,137 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin2.c                                         :+:      :+:    :+:   */
+/*   builtin3.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/02 06:47:05 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/01 09:21:08 by mpelazza         ###   ########.fr       */
+/*   Created: 2023/02/16 14:14:33 by mpelazza          #+#    #+#             */
+/*   Updated: 2023/03/01 21:08:36 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	check_symbolic_links(t_var *v, char *path)
+void	ft_export_sort_env(t_list *env)
 {
-	struct stat	path_stat;
+	t_list	*tmp;
+	void	*swp;
 
-	lstat(path, &path_stat);
-	if (S_ISLNK(path_stat.st_mode))
+	tmp = env;
+	while (tmp->next->next)
 	{
-		if (path_stat.st_nlink > 1)
+		if (ft_strcmp(tmp->content, tmp->next->content) > 0)
 		{
-			ft_builtin_error(v, "cd", path,
-				"Too many levels of symbolic links");
+			swp = tmp->content;
+			tmp->content = tmp->next->content;
+			tmp->next->content = swp;
+			tmp = env;
+		}
+		else
+			tmp = tmp->next;
+	}
+}
+
+void	ft_export_print(t_list *env)
+{
+	t_list	*env_cpy;
+	t_list	*start;
+	char	*tmp;
+	int		i;
+
+	env_cpy = ft_lstcpy(env);
+	start = env_cpy;
+	ft_export_sort_env(env_cpy);
+	while (env_cpy->next)
+	{
+		tmp = (char *)env_cpy->content;
+		i = -1;
+		ft_putstr_fd("declare -x ", STDOUT);
+		while (tmp[++i] != '=')
+			ft_putchar_fd(tmp[i], STDOUT);
+		ft_putstr_fd("=\"", STDOUT);
+		while (tmp[++i])
+			ft_putchar_fd(tmp[i], STDOUT);
+		ft_putchar_fd('\"', STDOUT);
+		ft_putchar_fd('\n', STDOUT);
+		env_cpy = env_cpy->next;
+	}
+	ft_lstfree(&start);
+}
+
+int	ft_check_export(t_var *v, char *cmd)
+{
+	int		i;
+
+	i = -1;
+	if (!cmd[0] || cmd[0] == '='
+		|| (cmd[1] && !ft_isalpha(cmd[1]) && cmd[1] != '_'))
+	{
+		if (v)
+			ft_builtin_error(v, "export", cmd, "not a valid identifier");
+		return (0);
+	}
+	while (cmd[++i] && cmd[i] != '=')
+	{
+		if (!ft_isalnum(cmd[i]) && cmd[i] != '_')
+		{
+			if (v)
+				ft_builtin_error(v, "export", cmd, "not a valid identifier");
 			return (0);
 		}
 	}
 	return (1);
 }
 
-int	check_is_dir_and_perm(t_var *v, char *path)
+void	ft_export_set_var(t_list **env, char *cmd)
 {
-	struct stat	path_stat;
+	t_list	*tmp;
+	int		len;
 
-	stat(path, &path_stat);
-	if (S_ISREG(path_stat.st_mode))
+	tmp = *env;
+	len = 0;
+	while (cmd[len] && cmd[len] != '=')
+		++len;
+	while (tmp)
 	{
-		ft_builtin_error(v, "cd", path, "Not a directory");
-		return (0);
+		if (!ft_strncmp(cmd, (char *)tmp->content, len))
+			break ;
+		tmp = tmp->next;
 	}
-	if (S_ISDIR(path_stat.st_mode) && !(path_stat.st_mode & S_IRUSR))
+	if (tmp)
 	{
-		ft_builtin_error(v, "cd", path, "Permission denied");
-		return (0);
-	}
-	return (1);
-}
-
-int	check_path(t_var *v, DIR *dir, char *path)
-{
-	if (!check_symbolic_links(v, path))
-		return (0);
-	if (dir)
-	{
-		closedir(dir);
-		if (!check_is_dir_and_perm(v, path))
-			return (0);
-		return (1);
+		free(tmp->content);
+		tmp->content = (void *)cmd;
 	}
 	else
-	{
-		if (!check_is_dir_and_perm(v, path))
-			return (0);
-		ft_builtin_error(v, "cd", path, "No such file or directory");
-		return (0);
-	}
+		ft_lstadd_back(env, ft_lstnew(cmd));
 }
 
-void	ft_change_pwd(t_list *env)
+void	ft_export(t_var *v, t_list *cmd, t_list *env)
 {
-	char	*pwd;
+	char	*var;
 
-	pwd = ft_strjoin_free("PWD=", getcwd(NULL, 0), 2);
-	while (env)
-	{
-		if (!ft_strncmp((char *)env->content, "PWD=", 4))
-		{
-			free(env->content);
-			env->content = (void *)pwd;
-			return ;
-		}
-		env = env->next;
-	}
-}
-
-void	ft_cd(t_var *v, t_list *cmd, t_list *env)
-{
-	char	*path;
-	char	*root;
-
-	root = ft_getenv(env, "HOME");
 	if (!cmd)
-		path = ft_strdup(root);
-	else
-		path = ft_strdup((char *)cmd->content);
-	if (path[0] == '~' && path[1] && path[1] == '/')
+		ft_export_print(env);
+	while (cmd)
 	{
-		free(path);
-		path = ft_strjoin(root, (char *)cmd->content + 1);
+		if (!ft_check_export(v, (char *)cmd->content))
+		{
+			cmd = cmd->next;
+			continue ;
+		}
+		if (!ft_strchr((char *)cmd->content, '='))
+		{
+			var = ft_getenv(v->export, (char *)cmd->content);
+			if (var)
+			{
+				var = ft_strjoin_free(ft_strjoin((char *)cmd->content,
+							"="), var, 1);
+				ft_export_set_var(&env, var);
+			}
+		}
+		else
+			ft_export_set_var(&v->export, ft_strdup((char *)cmd->content));
+		cmd = cmd->next;
 	}
-	else if (path[0] == '~' && !path[1])
-	{
-		free(path);
-		path = ft_strdup(root);
-	}
-	if (check_path(v, opendir(path), path))
-		chdir(path);
-	ft_change_pwd(env);
-	free(path);
 }

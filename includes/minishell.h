@@ -42,6 +42,14 @@ typedef struct s_history
 	struct s_history	*next;
 }		t_histo;
 
+typedef struct s_strings
+{
+	char				*line;
+	char				*pipeline_exit_status;
+	char				*pwd;
+	char				*old_pwd;
+}		t_strings;
+
 typedef struct s_var
 {
 	t_list				**cmd;
@@ -51,11 +59,12 @@ typedef struct s_var
 
 	t_histo				*histo;
 
+	t_strings			*strings;
+
 	pid_t				process;
 
 	char				**path;
-	char				*line;
-	char				*pipeline_exit_status;
+
 
 	int					pipe_start;
 	int					pipe_count;
@@ -80,9 +89,15 @@ void	ft_close_fd_cmd(t_list *fd_cmd);
 char	*ft_get_metachar(char *line, int *i);
 int		ft_handle_metachar(t_var *v, char *line, int *i);
 //builtin
-void	ft_echo(t_list *cmd);
+	//cd
 void	ft_cd(t_var *v, t_list *cmd, t_list *env);
+void	ft_change_pwd(t_list *env, t_var *v, int pri);
+void	ft_change_dir(char *path, int *pri);
+void	ft_update_env(t_list *env, t_var *v);
+void	ft_free_cd(char *path, char **paths);
+
 void	ft_pwd(t_var *v);
+void	ft_echo(t_list *cmd);
 void	ft_export(t_var *v, t_list *cmd, t_list *env);
 void	ft_unset(t_list *cmd, t_list *env);
 void	ft_env(t_list *env);

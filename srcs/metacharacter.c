@@ -25,7 +25,7 @@ int	ft_handle_pipe(t_var *v, char *line, int *i)
 	while (line[*i] && ft_iswspace(line[*i]))
 		++(*i);
 	if (!line[*i])
-		v->line = ft_strjoin_free(v->line, readline("> "), 3);
+		v->strings->line = ft_strjoin_free(v->strings->line, readline("> "), 3);
 	else if (line[*i] == '|')
 		return (ft_parsing_error(v, "|"));
 	ft_lstadd_back(&v->fd_cmd, ft_set_fd_cmd());

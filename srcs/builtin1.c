@@ -56,14 +56,7 @@ void	ft_echo(t_list *cmd)
 
 void	ft_pwd(t_var *v)
 {
-	char	*pwd;
-
-	pwd = getcwd(NULL, 0);
-	if (pwd)
-		printf("%s\n", pwd);
-	else
-		ft_exec_error(v, "pwd", NULL, 124);
-	free(pwd);
+	printf("%s\n", v->strings->pwd + 4);
 }
 
 void	ft_env(t_list *env)

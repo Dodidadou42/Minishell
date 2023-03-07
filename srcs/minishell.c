@@ -27,9 +27,12 @@ t_var	*ft_init_var(char **envp)
 			ft_lstadd_back(&v->env, ft_lstnew(ft_strdup(envp[i])));
 	}
 	v->path = NULL;
-	v->line = NULL;
-	v->pipeline_exit_status = ft_itoa(1);
+	v->strings = malloc(sizeof(t_strings));
+	v->strings->line = NULL;
+	v->strings->pipeline_exit_status = ft_itoa(1);
 	v->histo = NULL;
+	v->strings->pwd = ft_strjoin("PWD=", ft_getenv(v->env, "PWD"));
+	v->strings->old_pwd = ft_strjoin("OLDPWD=", ft_getenv(v->env, "OLDPWD"));
 	ft_init_signals(v);
 	return (v);
 }
@@ -56,14 +59,14 @@ int	main(int argc, char **argv, char **envp)
 	v = ft_init_var(envp);
 	while (1)
 	{
-		v->line = ft_read_command(v->line, v);
+		v->strings->line = ft_read_command(v->strings->line, v);
 		v->fd_cmd = ft_set_fd_cmd();
 		v->pipe_start = -1;
 		v->pipe_count = 0;
 		v->cmd = ft_parse_command(v);
-		free(v->pipeline_exit_status);
-		v->pipeline_exit_status = ft_itoa(0);
-		if (v->line && v->line[0] && v->cmd[0])
+		free(v->strings->pipeline_exit_status);
+		v->strings->pipeline_exit_status = ft_itoa(0);
+		if (v->strings->line && v->strings->line[0] && v->cmd[0])
 			ft_execution(v, v->fd_cmd);
 		ft_free_var(v);
 	}

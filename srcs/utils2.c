@@ -70,9 +70,9 @@ int	ft_pipeline_exit_status(t_var *v, char *word, int *i[2])
 
 	*i[0] += 2;
 	if (!word)
-		return (ft_strlen(v->pipeline_exit_status));
+		return (ft_strlen(v->strings->pipeline_exit_status));
 	j = 0;
-	while (v->pipeline_exit_status[j])
-		word[(*i[1])++] = v->pipeline_exit_status[j++];
+	while (v->strings->pipeline_exit_status[j])
+		word[(*i[1])++] = v->strings->pipeline_exit_status[j++];
 	return (0);
 }

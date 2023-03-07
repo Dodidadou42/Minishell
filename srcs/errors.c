@@ -18,9 +18,9 @@ int	ft_parsing_error(t_var *v, char *token)
 	ft_putstr_fd("-minishell: syntax error near unexpected token `", STDERR);
 	ft_putstr_fd(token, STDERR);
 	ft_putstr_fd("\'\n", STDERR);
-	ft_bzero((void *)v->line, ft_strlen(v->line));
-	free(v->pipeline_exit_status);
-	v->pipeline_exit_status = ft_itoa(258);
+	ft_bzero((void *)v->strings->line, ft_strlen(v->strings->line));
+	free(v->strings->pipeline_exit_status);
+	v->strings->pipeline_exit_status = ft_itoa(258);
 	return (258);
 }
 
@@ -34,8 +34,8 @@ int	ft_exec_error(t_var *v, char *cause, char *error, int status)
 	else
 		ft_putstr_fd(strerror(errno), STDERR);
 	ft_putchar_fd('\n', STDERR);
-	free(v->pipeline_exit_status);
-	v->pipeline_exit_status = ft_itoa(status);
+	free(v->strings->pipeline_exit_status);
+	v->strings->pipeline_exit_status = ft_itoa(status);
 	return (status);
 }
 
@@ -55,8 +55,8 @@ int	ft_builtin_error(t_var *v, char *cmd, char *cause, char *error)
 	else
 		ft_putstr_fd(strerror(errno), STDERR);
 	ft_putchar_fd('\n', STDERR);
-	free(v->pipeline_exit_status);
-	v->pipeline_exit_status = ft_itoa(1);
+	free(v->strings->pipeline_exit_status);
+	v->strings->pipeline_exit_status = ft_itoa(1);
 	return (1);
 }
 

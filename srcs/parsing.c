@@ -121,20 +121,20 @@ t_list	**ft_parse_command(t_var *v)
 	char	*tmp;
 	int		i;
 
-	cmd = malloc(sizeof(t_list *) * ((ft_count_char(v->line, '|')) + 2));
+	cmd = malloc(sizeof(t_list *) * ((ft_count_char(v->strings->line, '|')) + 2));
 	cmd[0] = NULL;
 	i = 0;
-	while (v->line[i])
+	while (v->strings->line[i])
 	{
-		while (v->line[i] && ft_iswspace(v->line[i]))
+		while (v->strings->line[i] && ft_iswspace(v->strings->line[i]))
 			++i;
-		if (v->line[i])
+		if (v->strings->line[i])
 		{
-			if (ft_handle_metachar(v, v->line, &i) == 1)
+			if (ft_handle_metachar(v, v->strings->line, &i) == 1)
 				cmd[++(v->pipe_count)] = NULL;
-			else if (v->line[i] && !ft_iswspace(v->line[i]))
+			else if (v->strings->line[i] && !ft_iswspace(v->strings->line[i]))
 			{
-				tmp = ft_get_word(v, v->line, &i);
+				tmp = ft_get_word(v, v->strings->line, &i);
 				if (tmp)
 					ft_lstadd_back(&cmd[v->pipe_count], ft_lstnew(tmp));
 			}

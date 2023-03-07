@@ -2,8 +2,8 @@ NAME	= minishell
 
 SRCS	= srcs/minishell.c srcs/parsing.c srcs/parsing_utils.c	\
 		  srcs/metacharacter.c srcs/execution.c srcs/history1.c \
-		  srcs/history2.c srcs/builtin1.c srcs/builtin2.c \
-		  srcs/builtin3.c srcs/signal.c	\
+		  srcs/history2.c srcs/cd1.c srcs/cd2.c \
+		  srcs/builtin1.c srcs/builtin2.c srcs/signal.c	\
 		  srcs/utils1.c srcs/utils2.c srcs/errors.c
 
 
@@ -39,7 +39,7 @@ ${NAME}:	${OBJS}
 			@make -s -C includes/libft
 			@tput cuu1 && tput dl1
 			@echo "${GREEN}Libft OK"
-			@echo "${WHITE}Compiling Minishell... [%s]"
+			@echo "${WHITE}Compiling Minishell..."
 			@${CC} ${CFLAGS} ${OBJS} ${LIBFT} ${READLINE} -o ${NAME}
 			@tput cuu1 && tput dl1
 			@echo "${GREEN}Minishell OK"
