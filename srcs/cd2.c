@@ -38,16 +38,7 @@ void	ft_update_env(t_list *env, t_var *v)
 	}
 }
 
-char	*ft_remove_private(char *pwd)
-{
-	char	*ret;
-
-	ret = ft_strjoin("PWD=", pwd + 12);
-	free(pwd);
-	return (ret);
-}
-
-void	ft_change_dir(char *path, int *pri)
+void	ft_move_dir(char *path, int *pri)
 {
 	char	*pwd;
 
@@ -65,27 +56,44 @@ void	ft_change_dir(char *path, int *pri)
 	free(pwd);
 }
 
-void	ft_change_pwd(t_list *env, t_var *v, int pri)
+void	ft_change_dir(t_var *v, char **paths, char *path, int *pri)
 {
-	char	*pwd;
-
-	free(v->strings->old_pwd);
-	v->strings->old_pwd = ft_strjoin_free("OLD", v->strings->pwd, 2);
-	pwd = ft_strjoin_free("PWD=", getcwd(NULL, 0), 2);
-	if (!pri && !ft_strncmp(pwd, "PWD=/private", 12))
-		pwd = ft_remove_private(pwd);
-	v->strings->pwd = ft_strdup(pwd);
-	ft_update_env(env, v);
-	free(pwd);
-}
-
-void	ft_free_cd(char *path, char **paths)
-{
-	int	i;
+	int		i;
 
 	i = -1;
-	free(path);
 	while (paths[++i])
-		free(paths[i]);
-	free(paths);
+	{
+		if (!ft_check_path(v, opendir(paths[i]), paths[i], path))
+		{
+			ft_move_dir(v->strings->pwd, pri);
+			return ;
+		}
+		ft_move_dir(paths[i], pri);
+	}
+	ft_change_pwd(v, pri);
+}
+
+void	ft_deleted_rep(t_var *v, char **paths, char *path, int *pri)
+{
+	char	*pwd;
+	int		i;
+
+	i = -1;
+	pwd = ft_strdup(v->strings->pwd + 4);
+	while (paths[++i])
+	{
+		if (!ft_strcmp(paths[i], ".."))
+			pwd = ft_cut_path(pwd);
+		else if (ft_strcmp(paths[i], "."))
+		{
+			pwd = ft_strjoin_free(pwd, "/", 1);
+			pwd = ft_strjoin_free(pwd, paths[i], 1);
+		}
+	}
+	if (ft_check_path(v, opendir(pwd), pwd, path))
+	{
+		ft_move_dir(pwd, pri);
+		ft_change_pwd(v, pri);
+	}
+	free(pwd);
 }

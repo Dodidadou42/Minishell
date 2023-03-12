@@ -49,7 +49,8 @@ int	ft_builtin_error(t_var *v, char *cmd, char *cause, char *error)
 	ft_putstr_fd(cause, STDERR);
 	if (!ft_strcmp(cmd, "export"))
 		ft_putchar_fd('\'', STDERR);
-	ft_putstr_fd(": ", STDERR);
+	if (ft_strcmp(cause, "HOME"))
+		ft_putstr_fd(": ", STDERR);
 	if (error)
 		ft_putstr_fd(error, STDERR);
 	else

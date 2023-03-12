@@ -48,6 +48,7 @@ typedef struct s_strings
 	char				*pipeline_exit_status;
 	char				*pwd;
 	char				*old_pwd;
+	char				*root;
 }		t_strings;
 
 typedef struct s_var
@@ -91,10 +92,15 @@ int		ft_handle_metachar(t_var *v, char *line, int *i);
 //builtin
 	//cd
 void	ft_cd(t_var *v, t_list *cmd, t_list *env);
-void	ft_change_pwd(t_list *env, t_var *v, int pri);
-void	ft_change_dir(char *path, int *pri);
+int		ft_check_path(t_var *v, DIR *dir, char *path, char *fullpath);
+void	ft_deleted_rep(t_var *v, char **paths, char *path, int *pri);
+void	ft_change_dir(t_var *v, char **paths, char *path, int *pri);
+void	ft_change_pwd(t_var *v, int *pri);
 void	ft_update_env(t_list *env, t_var *v);
-void	ft_free_cd(char *path, char **paths);
+char    *ft_cut_path(char *pwd);
+char	*ft_remove_private(char *pwd);
+int		ft_check_pwd(t_var *v, char *fullpath);
+void    ft_free_cd(char **paths, char *path, char *pwd);
 
 void	ft_pwd(t_var *v);
 void	ft_echo(t_list *cmd);

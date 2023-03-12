@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-int	check_is_dir_and_perm(t_var *v, char *path, char *fullpath)
+int	ft_check_is_dir_and_perm(t_var *v, char *path, char *fullpath)
 {
 	struct stat	path_stat;
 
@@ -30,7 +30,7 @@ int	check_is_dir_and_perm(t_var *v, char *path, char *fullpath)
 	return (1);
 }
 
-int	check_path(t_var *v, DIR *dir, char *path, char *fullpath)
+int	ft_check_path(t_var *v, DIR *dir, char *path, char *fullpath)
 {
 	struct stat	path_stat;
 
@@ -44,15 +44,15 @@ int	check_path(t_var *v, DIR *dir, char *path, char *fullpath)
 	if (dir)
 	{
 		closedir(dir);
-		if (!check_is_dir_and_perm(v, path, fullpath))
+		if (!ft_check_is_dir_and_perm(v, path, fullpath))
 			return (0);
 		return (1);
 	}
 	else
 	{
-		if (!check_is_dir_and_perm(v, path, fullpath))
-			return (0);
-		ft_builtin_error(v, "cd", fullpath, "No such file or directory");
+		if (ft_check_is_dir_and_perm(v, path, fullpath)
+			&& ft_check_pwd(v, fullpath))
+			ft_builtin_error(v, "cd", fullpath, "No such file or directory");
 		return (0);
 	}
 }
@@ -75,23 +75,31 @@ int	ft_check_peculiar(t_var *v, char *path)
 	return (1);
 }
 
-char	*ft_get_real_path(t_list *cmd, t_list *env)
+char	*ft_get_real_path(t_var *v, t_list *cmd, t_list *env)
 {
 	char	*path;
 
 	if (!cmd)
-		path = ft_strdup(ft_getenv(env, "HOME"));
+	{
+		if (ft_getenv(env, "HOME"))
+			path = ft_strdup(ft_getenv(env, "HOME"));
+		else
+		{
+			ft_builtin_error(v, "cd", "HOME", " not set");
+			return (NULL);
+		}
+	}
 	else
 		path = ft_strdup((char *)cmd->content);
 	if (path[0] == '~' && path[1] && path[1] == '/')
 	{
 		free(path);
-		path = ft_strjoin(ft_getenv(env, "HOME"), (char *)cmd->content + 1);
+		path = ft_strjoin(v->strings->root, (char *)cmd->content + 1);
 	}
 	else if (path[0] == '~' && !path[1])
 	{
 		free(path);
-		path = ft_strdup(ft_getenv(env, "HOME"));
+		path = ft_strdup(v->strings->root);
 	}
 	return (path);
 }
@@ -100,12 +108,11 @@ void	ft_cd(t_var *v, t_list *cmd, t_list *env)
 {
 	char		*path;
 	char		**paths;
-	int			i;
+	char		*pwd;
 	static int	pri = 0;
 
-	i = -1;
-	path = ft_get_real_path(cmd, env);
-	if (!ft_check_peculiar(v, path))
+	path = ft_get_real_path(v, cmd, env);
+	if (!path || !ft_check_peculiar(v, path))
 		return ;
 	if (ft_strncmp(path, "/", 1))
 		paths = ft_split(path, '/');
@@ -115,11 +122,10 @@ void	ft_cd(t_var *v, t_list *cmd, t_list *env)
 		paths[0] = ft_strjoin_free("/", paths[0], 2);
 		pri = 0;
 	}
-	while (paths[++i])
-	{
-		if (check_path(v, opendir(paths[i]), paths[i], path))
-			ft_change_dir(paths[i], &pri);
-	}
-	ft_change_pwd(env, v, pri);
-	ft_free_cd(path, paths);
+	pwd = getcwd(NULL, 0);
+	if (!pwd && path[0] != '/')
+		ft_deleted_rep(v, paths, path, &pri);
+	else
+		ft_change_dir(v, paths, path, &pri);
+	ft_free_cd(paths, path, pwd);
 }

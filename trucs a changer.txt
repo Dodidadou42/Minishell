@@ -33,16 +33,20 @@ cd // 					ca a l'air d'etre la meme chose que / mais juste avec // (donc /Users
 						C'est good
 cd /etc, cd /var.. 		faut voir sur les ordi de lecole mais moi ca m'envoie dans /private/var a la place de /var
 						C'est good et c'était un enfer
+
 unset HOME puis cd		faut mettre un message d'erreur ("minishell: cd: HOME not set" (exit code = 1)
 						relou pcq si on unset HOME et cd on doit avoir ca mais si cd ~ ca doit marcher sans HOME,
 						 pour l'instant ca segfault les deux, peux etre mettre char *root dans v au lancement comme ca meme si c'est unset
 						 on l'aura toujours pour cd ~ faut voir
+						 C'est good
 
 cd path | cmd			Le dossier ne dois pas changer si cd n'est pas la derniere commande utiliser (aucun pipe derriere)
 						on peux utiliser v->pipe_count et v->pipe_start
 						edit : faut aussi faire ca avec export donc je le ferai quand je ferai le truc de export plus haut
 
 cd apres un delete du dossier parent
+						C'est good, j'ai pas reproduit le comportement exact de bash
+						parcequ'il est horrible, mais en soit c'est géré.
 
 $OLDPWD					A chaque cd il faut set le repertoire acuelle dans la variable OLDPWD (Elle peux ne pas deja exister si il n'y a eu aucun cd)
 						C'est good

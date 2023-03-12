@@ -33,6 +33,7 @@ t_var	*ft_init_var(char **envp)
 	v->histo = NULL;
 	v->strings->pwd = ft_strjoin("PWD=", ft_getenv(v->env, "PWD"));
 	v->strings->old_pwd = ft_strjoin("OLDPWD=", ft_getenv(v->env, "OLDPWD"));
+	v->strings->root = ft_strdup(ft_getenv(v->env, "HOME"));
 	ft_init_signals(v);
 	return (v);
 }
