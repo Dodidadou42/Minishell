@@ -72,6 +72,8 @@ int	ft_check_peculiar(t_var *v, char *path)
 		free(path);
 		return (0);
 	}
+	if (!ft_cd_swap(v, path))
+		return (0);
 	return (1);
 }
 

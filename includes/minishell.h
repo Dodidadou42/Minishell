@@ -93,6 +93,7 @@ int		ft_handle_metachar(t_var *v, char *line, int *i);
 	//cd
 void	ft_cd(t_var *v, t_list *cmd, t_list *env);
 int		ft_check_path(t_var *v, DIR *dir, char *path, char *fullpath);
+int		ft_cd_swap(t_var *v,char *path);
 void	ft_deleted_rep(t_var *v, char **paths, char *path, int *pri);
 void	ft_change_dir(t_var *v, char **paths, char *path, int *pri);
 void	ft_change_pwd(t_var *v, int *pri);

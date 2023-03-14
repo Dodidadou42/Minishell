@@ -38,6 +38,33 @@ void	ft_update_env(t_list *env, t_var *v)
 	}
 }
 
+int	ft_cd_swap(t_var *v,char *path)
+{
+	char *tmp;
+
+	if (!ft_strncmp(path, "-", 1))
+	{
+		if (!ft_strcmp(path, "-"))
+		{
+			chdir(v->strings->old_pwd + 7);
+			printf("%s\n", v->strings->old_pwd + 7);
+			tmp = v->strings->pwd;
+			v->strings->pwd = ft_strdup(v->strings->old_pwd + 3);
+			free(v->strings->old_pwd);
+			v->strings->old_pwd = ft_strjoin_free("OLD", tmp, 2);
+			ft_update_env(v->env, v);
+		}
+		else
+		{
+			path[2] = '\0';
+			ft_builtin_error(v, "cd", path, "invalid option");
+		}
+		free(path);
+		return (0);
+	}
+	return (1);
+}
+
 void	ft_move_dir(char *path, int *pri)
 {
 	char	*pwd;
