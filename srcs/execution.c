@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:48:12 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/01 21:09:06 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/18 00:23:43 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,28 +18,29 @@ void	ft_exec_builtin(t_var *v, t_list *cmd, t_list *env)
 		ft_echo(cmd->next);
 	else if (!ft_strcmp((char *)cmd->content, "history"))
 		ft_history(v, cmd->next);
-	else if (!ft_strcmp((char *)cmd->content, "cd"))
+	else if (!ft_strcmp((char *)cmd->content, "cd") && !v->pipe_count)
 		ft_cd(v, cmd->next, env);
 	else if (!ft_strcmp((char *)cmd->content, "pwd"))
 		ft_pwd(v);
-	else if (!ft_strcmp((char *)cmd->content, "export"))
+	else if (!ft_strcmp((char *)cmd->content, "export")
+		&& (!v->pipe_count || !cmd->next))
 		ft_export(v, cmd->next, env);
 	else if (!ft_strcmp((char *)cmd->content, "unset"))
-		ft_unset(cmd->next, env);
+		ft_unset(v, cmd->next, &env);
 	else if (!ft_strcmp((char *)cmd->content, "env"))
 		ft_env(env);
 	else if (!ft_strcmp((char *)cmd->content, "exit"))
 	{
-		system("leaks minishell");
 		exit(0);
 	}
-	while (cmd && ft_strchr((char *)cmd->content, '=')
-		&& ft_check_export(NULL, (char *)cmd->content))
+	while (!v->pipe_count && cmd && ft_strchr((char *)cmd->content, '=')
+		&& ft_check_export(NULL, (char *)cmd->content, NULL))
 	{
-		ft_export_set_var(&v->export, ft_strdup((char *)cmd->content));
+		ft_assignation(v, (char *)cmd->content);
 		cmd = cmd->next;
 	}
 }
+//		system("leaks minishell");
 
 void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 {
@@ -92,7 +93,8 @@ int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
 
 void	ft_finish_execution(t_var *v, int std_save[2])
 {
-	int	status;
+	char	*tmp;
+	int		status;
 
 	waitpid(v->process, &status, 0);
 	while (wait(NULL) > 0)
@@ -104,6 +106,16 @@ void	ft_finish_execution(t_var *v, int std_save[2])
 		free(v->strings->pipeline_exit_status);
 		v->strings->pipeline_exit_status = ft_itoa(ft_get_exit_code(status));
 	}
+	while (v->cat_exception--)
+	{
+		if (!tmp[0])
+			tmp = readline("\n");
+		else
+			tmp = readline("");
+		if (!v->cat_exception && !tmp[0])
+			write(1, "\n", 1);
+		free(tmp);
+	}
 }
 
 void	ft_execution(t_var *v, t_list *fd_cmd)
@@ -114,6 +126,7 @@ void	ft_execution(t_var *v, t_list *fd_cmd)
 
 	std_save[0] = dup(STDIN);
 	std_save[1] = dup(STDOUT);
+	ft_cat_exception(v, v->pipe_start + 1, v->pipe_count);
 	while (++(v->pipe_start) <= v->pipe_count)
 	{
 		fd_pipe_out = ft_setup_n_launch(v, std_save,

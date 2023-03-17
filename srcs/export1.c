@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin3.c                                         :+:      :+:    :+:   */
+/*   export1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:14:33 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/01 21:08:36 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/18 00:19:26 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	ft_export_sort_env(t_list *env)
 	void	*swp;
 
 	tmp = env;
-	while (tmp->next->next)
+	while (tmp->next)
 	{
 		if (ft_strcmp(tmp->content, tmp->next->content) > 0)
 		{
@@ -32,43 +32,44 @@ void	ft_export_sort_env(t_list *env)
 	}
 }
 
-void	ft_export_print(t_list *env)
+void	ft_export_print(t_list *env_cpy, t_list *export)
 {
-	t_list	*env_cpy;
 	t_list	*start;
 	char	*tmp;
 	int		i;
 
-	env_cpy = ft_lstcpy(env);
+	ft_lstadd_back(&env_cpy, ft_lstcpy(export));
 	start = env_cpy;
 	ft_export_sort_env(env_cpy);
 	while (env_cpy->next)
 	{
 		tmp = (char *)env_cpy->content;
-		i = -1;
 		ft_putstr_fd("declare -x ", STDOUT);
-		while (tmp[++i] != '=')
+		i = -1;
+		while (tmp[++i] && tmp[i] != '=')
 			ft_putchar_fd(tmp[i], STDOUT);
-		ft_putstr_fd("=\"", STDOUT);
-		while (tmp[++i])
-			ft_putchar_fd(tmp[i], STDOUT);
-		ft_putchar_fd('\"', STDOUT);
+		if (tmp[i])
+		{
+			ft_putstr_fd("=\"", STDOUT);
+			ft_putstr_fd(&tmp[++i], STDOUT);
+			ft_putchar_fd('\"', STDOUT);
+		}
 		ft_putchar_fd('\n', STDOUT);
 		env_cpy = env_cpy->next;
 	}
 	ft_lstfree(&start);
 }
 
-int	ft_check_export(t_var *v, char *cmd)
+int	ft_check_export(t_var *v, char *cmd, char *cmd_name)
 {
 	int		i;
 
 	i = -1;
 	if (!cmd[0] || cmd[0] == '='
-		|| (cmd[1] && !ft_isalpha(cmd[1]) && cmd[1] != '_'))
+		|| (!ft_isalpha(cmd[0]) && cmd[0] != '_'))
 	{
 		if (v)
-			ft_builtin_error(v, "export", cmd, "not a valid identifier");
+			ft_builtin_error(v, cmd_name, cmd, "not a valid identifier");
 		return (0);
 	}
 	while (cmd[++i] && cmd[i] != '=')
@@ -76,7 +77,7 @@ int	ft_check_export(t_var *v, char *cmd)
 		if (!ft_isalnum(cmd[i]) && cmd[i] != '_')
 		{
 			if (v)
-				ft_builtin_error(v, "export", cmd, "not a valid identifier");
+				ft_builtin_error(v, cmd_name, cmd, "not a valid identifier");
 			return (0);
 		}
 	}
@@ -86,6 +87,7 @@ int	ft_check_export(t_var *v, char *cmd)
 void	ft_export_set_var(t_list **env, char *cmd)
 {
 	t_list	*tmp;
+	char	*cast;
 	int		len;
 
 	tmp = *env;
@@ -94,7 +96,8 @@ void	ft_export_set_var(t_list **env, char *cmd)
 		++len;
 	while (tmp)
 	{
-		if (!ft_strncmp(cmd, (char *)tmp->content, len))
+		cast = (char *)tmp->content;
+		if (!ft_strncmp(cmd, cast, len) && (!cast[len] || cast[len] == '='))
 			break ;
 		tmp = tmp->next;
 	}
@@ -109,29 +112,17 @@ void	ft_export_set_var(t_list **env, char *cmd)
 
 void	ft_export(t_var *v, t_list *cmd, t_list *env)
 {
-	char	*var;
-
 	if (!cmd)
-		ft_export_print(env);
+		ft_export_print(ft_lstcpy(env), v->export);
 	while (cmd)
 	{
-		if (!ft_check_export(v, (char *)cmd->content))
+		if (!ft_check_export(v, (char *)cmd->content, "export"))
 		{
 			cmd = cmd->next;
 			continue ;
 		}
-		if (!ft_strchr((char *)cmd->content, '='))
-		{
-			var = ft_getenv(v->export, (char *)cmd->content);
-			if (var)
-			{
-				var = ft_strjoin_free(ft_strjoin((char *)cmd->content,
-							"="), var, 1);
-				ft_export_set_var(&env, var);
-			}
-		}
-		else
-			ft_export_set_var(&v->export, ft_strdup((char *)cmd->content));
+		ft_setup_export(v, (char *)cmd->content,
+			ft_strlen((char *)cmd->content), v->export);
 		cmd = cmd->next;
 	}
 }

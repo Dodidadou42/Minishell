@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd3.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ddychus <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 16:55:23 by ddychus           #+#    #+#             */
-/*   Updated: 2023/03/12 16:55:25 by ddychus          ###   ########.fr       */
+/*   Updated: 2023/03/17 22:10:09 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,15 @@ char	*ft_cut_path(char *pwd)
 	return (ret);
 }
 
+char	*ft_remove_private(char *pwd)
+{
+	char	*ret;
+
+	ret = ft_strjoin("PWD=", pwd + 12);
+	free(pwd);
+	return (ret);
+}
+
 void	ft_change_pwd(t_var *v, int *pri)
 {
 	char	*pwd;
@@ -49,15 +58,6 @@ void	ft_change_pwd(t_var *v, int *pri)
 	v->strings->pwd = ft_strdup(pwd);
 	ft_update_env(v->env, v);
 	free(pwd);
-}
-
-char	*ft_remove_private(char *pwd)
-{
-	char	*ret;
-
-	ret = ft_strjoin("PWD=", pwd + 12);
-	free(pwd);
-	return (ret);
 }
 
 int	ft_check_pwd(t_var *v, char *fullpath)

@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 19:35:45 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/01 19:29:44 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/17 23:10:01 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void	ft_get_quote(t_var *v, char *line, char *word, int *i[2])
 	*i[0] += 1;
 }
 
-char	*ft_get_word(t_var *v, char *line, int *i)
+char	*ft_get_word(t_var *v, char *line, int *i, char start)
 {
 	char	*word;
 	int		j;
@@ -99,7 +99,8 @@ char	*ft_get_word(t_var *v, char *line, int *i)
 			ft_get_quote(v, line, word, (int *[]){i, &j});
 		else if (!ft_strncmp(&line[*i], "$?", 2))
 			ft_pipeline_exit_status(v, word, (int *[]){i, &j});
-		else if (line[*i] == '$' && line[*i + 1] && !ft_iswspace(line[*i + 1]))
+		else if (line[*i] == '$' && line[*i + 1]
+			&& !ft_iswspace(line[*i + 1]) && start)
 			ft_get_env_var(v->env, &line[*i], word, (int *[]){i, &j});
 		else if (!ft_strchr(" |<>", line[*i]))
 			word[j++] = line[(*i)++];
@@ -107,11 +108,8 @@ char	*ft_get_word(t_var *v, char *line, int *i)
 			break ;
 	}
 	word[j] = '\0';
-	if (!word[0])
-	{
-		free(word);
-		return (NULL);
-	}
+	if (!word[0] && start == '$')
+		return (ft_free_null(word));
 	return (word);
 }
 
@@ -121,7 +119,8 @@ t_list	**ft_parse_command(t_var *v)
 	char	*tmp;
 	int		i;
 
-	cmd = malloc(sizeof(t_list *) * ((ft_count_char(v->strings->line, '|')) + 2));
+	cmd = malloc(sizeof(t_list *)
+			* ((ft_count_char(v->strings->line, '|')) + 2));
 	cmd[0] = NULL;
 	i = 0;
 	while (v->strings->line[i])
@@ -134,7 +133,7 @@ t_list	**ft_parse_command(t_var *v)
 				cmd[++(v->pipe_count)] = NULL;
 			else if (v->strings->line[i] && !ft_iswspace(v->strings->line[i]))
 			{
-				tmp = ft_get_word(v, v->strings->line, &i);
+				tmp = ft_get_word(v, v->strings->line, &i, v->strings->line[i]);
 				if (tmp)
 					ft_lstadd_back(&cmd[v->pipe_count], ft_lstnew(tmp));
 			}

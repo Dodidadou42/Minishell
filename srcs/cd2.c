@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd2.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ddychus <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/03 10:46:26 by ddychus           #+#    #+#             */
-/*   Updated: 2023/03/03 10:46:29 by ddychus          ###   ########.fr       */
+/*   Updated: 2023/03/17 22:04:33 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,13 @@ void	ft_update_env(t_list *env, t_var *v)
 		}
 		tmp = tmp->next;
 	}
+	if (!tmp)
+		ft_lstadd_back(&env, ft_lstnew(ft_strdup(v->strings->old_pwd)));
 }
 
-int	ft_cd_swap(t_var *v,char *path)
+int	ft_cd_swap(t_var *v, char *path)
 {
-	char *tmp;
+	char	*tmp;
 
 	if (!ft_strncmp(path, "-", 1))
 	{

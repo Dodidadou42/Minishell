@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 11:45:18 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/01 21:29:02 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/17 23:45:14 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 	*i += 2;
 	while (line[*i] && ft_iswspace(line[*i]))
 		++(*i);
-	limiter = ft_strjoin_free(ft_get_word(v, line, i), "\n", 1);
+	limiter = ft_strjoin_free(ft_get_word(v, line, i, 0), "\n", 1);
 	pipe(fd_pipe);
 	v->ctrlc.sa_handler = do_nothing;
 	sigaction(SIGINT, &v->ctrlc, NULL);
@@ -90,19 +90,16 @@ int	ft_get_fd_cmd(t_var *v, int fd_cmd[2], char *line, int *i)
 			++(*i);
 	if (!line[*i])
 		return (ft_parsing_error(v, "newline"));
-	if (ft_strchr("<>|", line[*i]))
+	else if (ft_strchr("<>|", line[*i]))
 		return (ft_parsing_error(v, ft_get_metachar(line, i)));
-	filename = ft_get_word(v, line, i);
-	if (!ft_strcmp(metachar, "<"))
-		fd_cmd[0] = open(filename, O_RDONLY);
-	else if (!ft_strcmp(metachar, ">>"))
-		fd_cmd[1] = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-	else if (!ft_strcmp(metachar, ">"))
-		fd_cmd[1] = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	filename = ft_get_word(v, line, i, line[*i]);
+	ft_open_file(metachar, filename, fd_cmd);
 	if (fd_cmd[0] < 0 || fd_cmd[1] < 0)
 	{
 		ft_exec_error(v, filename, NULL, 1);
 		v->pipe_start = v->pipe_count;
+		ft_lstfree_content(&v->fd_cmd);
+		v->fd_cmd = ft_set_fd_cmd();
 		while (line[*i] && line[*i] != '|')
 			++(*i);
 	}

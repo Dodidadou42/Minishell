@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/06 20:04:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/27 22:55:01 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/17 23:44:27 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ char	*ft_get_metachar(char *line, int *i)
 		*i += 1;
 		return ("<");
 	}
+	else if (line[*i] == '|')
+		return ("|");
 	return (NULL);
 }
 
@@ -74,5 +76,21 @@ int	ft_pipeline_exit_status(t_var *v, char *word, int *i[2])
 	j = 0;
 	while (v->strings->pipeline_exit_status[j])
 		word[(*i[1])++] = v->strings->pipeline_exit_status[j++];
+	return (0);
+}
+
+int	ft_cat_exception(t_var *v, int i, int count)
+{
+	if (v->cmd[i] && !ft_strcmp((char *)v->cmd[i]->content, "cat")
+		&& !v->cmd[i]->next && i != count)
+	{
+		while (!ft_strcmp((char *)v->cmd[i]->content, "cat")
+			&& !v->cmd[i]->next)
+		{
+			v->cat_exception += 1;
+			v->pipe_start += 1;
+			i += 1;
+		}
+	}
 	return (0);
 }

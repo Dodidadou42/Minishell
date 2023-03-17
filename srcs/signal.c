@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:49:25 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/01 17:37:10 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/15 19:39:48 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	ft_handle_ctrl_c(int signal)
 void	ft_handle_ctrl_c_heredoc(int signal)
 {	
 	(void)signal;
+	wait(NULL);
 	write(1, "\n", 1);
 	exit(1);
 }

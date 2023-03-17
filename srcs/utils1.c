@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:18:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/22 17:42:14 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/17 21:59:42 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,19 @@ char	*ft_getenv(t_list *env, char *name)
 	char	*cast;
 	int		len;
 
-	len = ft_strlen(name);
+	len = 0;
+	while (name[len] && name[len] != '=')
+		++len;
 	while (env)
 	{
 		cast = (char *)env->content;
-		if (!ft_strncmp(cast, name, len) && cast[len] == '=')
-			return (&cast[len + 1]);
+		if (!ft_strncmp(cast, name, len))
+		{	
+			if (!cast[len])
+				return ("");
+			else if (cast[len] == '=')
+				return (&cast[len + 1]);
+		}
 		env = env->next;
 	}
 	return (NULL);
@@ -68,7 +75,7 @@ int	ft_is_builtin(t_list *cmd)
 		|| !ft_strcmp((char *)cmd->content, "history")
 		|| !ft_strcmp((char *)cmd->content, "exit")
 		|| (ft_strchr((char *)cmd->content, '=')
-			&& ft_check_export(NULL, (char *)cmd->content)))
+			&& ft_check_export(NULL, (char *)cmd->content, NULL)))
 		return (1);
 	return (0);
 }

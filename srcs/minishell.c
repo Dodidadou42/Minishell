@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:56:29 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/01 17:29:18 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/17 22:59:44 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ t_var	*ft_init_var(char **envp)
 		while (envp[++i])
 			ft_lstadd_back(&v->env, ft_lstnew(ft_strdup(envp[i])));
 	}
+	if (!ft_getenv(v->env, "OLDPWD"))
+		ft_assignation(v, "OLDPWD");
 	v->path = NULL;
 	v->strings = malloc(sizeof(t_strings));
 	v->strings->line = NULL;
@@ -64,6 +66,7 @@ int	main(int argc, char **argv, char **envp)
 		v->fd_cmd = ft_set_fd_cmd();
 		v->pipe_start = -1;
 		v->pipe_count = 0;
+		v->cat_exception = 0;
 		v->cmd = ft_parse_command(v);
 		free(v->strings->pipeline_exit_status);
 		v->strings->pipeline_exit_status = ft_itoa(0);

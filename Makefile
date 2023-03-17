@@ -1,10 +1,10 @@
 NAME	= minishell
 
 SRCS	= srcs/minishell.c srcs/parsing.c srcs/parsing_utils.c	\
-		  srcs/metacharacter.c srcs/execution.c srcs/history1.c \
-		  srcs/history2.c srcs/cd1.c srcs/cd2.c srcs/cd3.c \
-		  srcs/builtin1.c srcs/builtin2.c srcs/signal.c	\
-		  srcs/utils1.c srcs/utils2.c srcs/errors.c
+		  srcs/metacharacter.c srcs/execution.c srcs/history1.c	\
+		  srcs/history2.c srcs/builtin.c srcs/export1.c srcs/export2.c	\
+		  srcs/cd1.c srcs/cd2.c srcs/cd3.c srcs/signal.c	\
+		  srcs/utils1.c srcs/utils2.c srcs/utils3.c srcs/errors.c
 
 
 
@@ -16,6 +16,7 @@ LIBFT	= -Lincludes/libft -lft
 
 CFLAGS	= -Wall -Wextra -Werror
 
+#READLINE = -lreadline -L/usr/local/opt/readline/lib -I//usr/local/opt/readline/include
 READLINE = -lreadline -L/Users/${USER}/.brew/opt/readline/lib -I/Users/${USER}/.brew/opt/readline/include
 
 GREEN	= \033[32m
@@ -26,6 +27,7 @@ WHITE	= \033[37m
 
 RED		= \033[0;31m
 
+#all:	${NAME}
 all:	check_brew check_readline ${NAME}
 
 .c.o:	
@@ -42,21 +44,21 @@ ${NAME}:	${OBJS}
 			@echo "${WHITE}Compiling Minishell..."
 			@${CC} ${CFLAGS} ${OBJS} ${LIBFT} ${READLINE} -o ${NAME}
 			@tput cuu1 && tput dl1
-			@echo "${GREEN}Minishell OK"
+			@echo "${GREEN}Minishell OK${WHITE}"
 
 check_brew:
 	@if test ! $$(which brew); then \
 	    echo "${RED}Brew is not installed. ${WHITE}Installing now..."; \
 	    /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"; \
 	fi
-	@echo "${GREEN}Brew OK"
+	@echo "${GREEN}Brew OK${WHITE}"
 
 check_readline:
 	@if test -z "$$(brew list | grep readline)"; then \
 	    echo "${RED}Readline is not installed. ${WHITE}Installing now..."; \
 	    brew install readline; \
 	fi
-	@echo "${GREEN}Readline OK"
+	@echo "${GREEN}Readline OK${WHITE}"
 
 clean:
 		@echo "${WHITE}Cleaning objects..."
@@ -67,13 +69,13 @@ clean:
 		@make -s -C includes/libft clean
 		@rm -f includes/libft/libft.a
 		@tput cuu1 && tput dl1
-		@echo "${YELLOW}Libft cleaned"
+		@echo "${YELLOW}Libft cleaned${WHITE}"
 
 fclean: clean
 		@echo "${WHITE}Cleaning Minishell"
 		@rm -f ${NAME}
 		@tput cuu1 && tput dl1
-		@echo "${YELLOW}Minishell Cleaned"
+		@echo "${YELLOW}Minishell Cleaned${WHITE}"
 
 re: fclean all
 

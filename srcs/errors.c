@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 02:26:37 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/02/22 15:50:30 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/17 21:52:37 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,17 +59,4 @@ int	ft_builtin_error(t_var *v, char *cmd, char *cause, char *error)
 	free(v->strings->pipeline_exit_status);
 	v->strings->pipeline_exit_status = ft_itoa(1);
 	return (1);
-}
-
-int	ft_get_exit_code(int status)
-{
-	if (status == 0)
-		return (0);
-	else if (status > 0)
-		return (status / 256);
-	else
-	{
-		status = -status - 1;
-		return (255 - (status / 256));
-	}
 }
