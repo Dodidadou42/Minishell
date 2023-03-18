@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:48:12 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/18 00:23:43 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/18 15:35:25 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,8 @@ void	ft_exec_builtin(t_var *v, t_list *cmd, t_list *env)
 		ft_unset(v, cmd->next, &env);
 	else if (!ft_strcmp((char *)cmd->content, "env"))
 		ft_env(env);
-	else if (!ft_strcmp((char *)cmd->content, "exit"))
-	{
-		exit(0);
-	}
+	else if (!ft_strcmp((char *)cmd->content, "exit") && !v->pipe_count)
+		ft_exit(v, cmd->next);
 	while (!v->pipe_count && cmd && ft_strchr((char *)cmd->content, '=')
 		&& ft_check_export(NULL, (char *)cmd->content, NULL))
 	{
@@ -40,7 +38,6 @@ void	ft_exec_builtin(t_var *v, t_list *cmd, t_list *env)
 		cmd = cmd->next;
 	}
 }
-//		system("leaks minishell");
 
 void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 {

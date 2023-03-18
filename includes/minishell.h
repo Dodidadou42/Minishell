@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:54:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/17 23:48:06 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/18 15:02:56 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ void	ft_pwd(t_var *v);
 void	ft_echo(t_list *cmd);
 void	ft_unset(t_var *v, t_list *cmd, t_list **env);
 void	ft_env(t_list *env);
+void	ft_exit(t_var *v, t_list *cmd);
 	//cd
 void	ft_cd(t_var *v, t_list *cmd, t_list *env);
 int		ft_check_path(t_var *v, DIR *dir, char *path, char *fullpath);

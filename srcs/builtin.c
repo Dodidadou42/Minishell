@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 01:35:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/17 20:45:34 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/18 16:04:17 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,3 +68,33 @@ void	ft_env(t_list *env)
 		env = env->next;
 	}
 }
+
+void	ft_exit(t_var *v, t_list *cmd)
+{
+	char	*cast;
+	int		i;
+
+	if (!cmd)
+		exit(ft_atoi(v->strings->pipeline_exit_status));
+	cast = (char *)cmd->content;
+	i = -1;
+	while (cast[++i])
+	{
+		if (!(ft_isdigit(cast[i])
+			|| ((cast[i] == '-' || cast[i] == '+') && !i)))
+		{
+			ft_putstr_fd("exit\n", STDOUT);
+			ft_builtin_error(v, "exit", cast, "numeric argument required");
+			exit(ft_atoi(v->strings->pipeline_exit_status));
+		}
+	}
+	if (cmd->next)
+	{
+		ft_putstr_fd("exit\n", STDOUT);
+		ft_exec_error(v, "exit", "too many arguments", 1);
+		return ;
+	}
+	exit(ft_atoi(cast));
+}
+//system("leaks minishell");
+// avec 'exec bash' "exit" avant erreurr mais avec 'chsh /bin/bash' "logout" donc jsp
