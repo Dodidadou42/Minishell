@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 11:45:18 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/17 23:45:14 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/19 19:54:15 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	ft_handle_pipe(t_var *v, char *line, int *i)
 	return (1);
 }
 
-void	ft_heredoc_process(t_var *v, char *limiter, int fd_pipe[2])
+void	ft_heredoc_process(t_var *v, char *limiter, int fd_pipe[2], int *status)
 {
 	char	*tmp;
 	pid_t	pid;
@@ -52,12 +52,12 @@ void	ft_heredoc_process(t_var *v, char *limiter, int fd_pipe[2])
 		}
 		free(tmp);
 		free(limiter);
-		exit(0);
+		exit(1);
 	}
 	else
 	{
 		close(fd_pipe[1]);
-		waitpid(pid, NULL, 0);
+		waitpid(pid, status, 0);
 	}
 }
 
@@ -65,6 +65,7 @@ void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 {
 	char	*limiter;
 	int		fd_pipe[2];
+	int		status;
 
 	*i += 2;
 	while (line[*i] && ft_iswspace(line[*i]))
@@ -73,9 +74,14 @@ void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 	pipe(fd_pipe);
 	v->ctrlc.sa_handler = do_nothing;
 	sigaction(SIGINT, &v->ctrlc, NULL);
-	ft_heredoc_process(v, limiter, fd_pipe);
+	ft_heredoc_process(v, limiter, fd_pipe, &status);
 	v->ctrlc.sa_handler = ft_handle_ctrl_c;
 	sigaction(SIGINT, &v->ctrlc, NULL);
+	if (!ft_get_exit_code(status))
+	{
+		line[*i] = '\0';
+		v->pipe_start = v->pipe_count;
+	}
 	free(limiter);
 	fd_cmd[0] = fd_pipe[0];
 }

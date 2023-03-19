@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:54:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/18 15:02:56 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/19 19:35:33 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ int		ft_check_export(t_var *v, char *cmd, char *cmd_name);
 void	ft_assignation(t_var *v, char *a);
 void	ft_setup_export(t_var *v, char *cmd, int len, t_list *export);
 //execution
-void	ft_execution(t_var *v, t_list *fd_cmd);
+void	ft_execution(t_var *v);
 //signal
 void	ft_init_signals(t_var *v);
 void	ft_handle_ctrl_c(int signal);
@@ -129,7 +129,7 @@ t_list	*ft_set_fd_cmd(void);
 void	ft_close_fd_cmd(t_list *fd_cmd);
 char	*ft_get_metachar(char *line, int *i);
 int		ft_pipeline_exit_status(t_var *v, char *word, int *i[2]);
-int		ft_cat_exception(t_var *v, int i, int count);
+t_list	*ft_cat_exception(t_var *v, int i, int count);
 int		ft_get_exit_code(int status);
 int		*ft_open_file(char *metachar, char *filename, int fd_cmd[2]);
 char	*ft_free_null(char *s);

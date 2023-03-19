@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:56:29 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/17 22:59:44 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/19 19:35:39 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	main(int argc, char **argv, char **envp)
 		free(v->strings->pipeline_exit_status);
 		v->strings->pipeline_exit_status = ft_itoa(0);
 		if (v->strings->line && v->strings->line[0] && v->cmd[0])
-			ft_execution(v, v->fd_cmd);
+			ft_execution(v);
 		ft_free_var(v);
 	}
 	return (0);

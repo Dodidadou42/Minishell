@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:48:12 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/18 15:35:25 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/19 20:07:37 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,15 +115,16 @@ void	ft_finish_execution(t_var *v, int std_save[2])
 	}
 }
 
-void	ft_execution(t_var *v, t_list *fd_cmd)
+void	ft_execution(t_var *v)
 {
-	int	std_save[2];
-	int	*fd_cmd_cast;
-	int	fd_pipe_out;
+	t_list	*fd_cmd;
+	int		*fd_cmd_cast;
+	int		std_save[2];
+	int		fd_pipe_out;
 
 	std_save[0] = dup(STDIN);
 	std_save[1] = dup(STDOUT);
-	ft_cat_exception(v, v->pipe_start + 1, v->pipe_count);
+	fd_cmd = ft_cat_exception(v, v->pipe_start + 1, v->pipe_count);
 	while (++(v->pipe_start) <= v->pipe_count)
 	{
 		fd_pipe_out = ft_setup_n_launch(v, std_save,
