@@ -42,6 +42,20 @@ char	*ft_free_null(char *s)
 	return (NULL);
 }
 
+int	ft_check_exec_is_dir(t_var *v, char *s)
+{
+	DIR *dir;
+	
+	dir = opendir(s);
+	if (dir)
+	{
+		ft_exec_error(v, s, "is a directory", 127);
+		closedir(dir);
+		return (1);
+	}
+	return (0);
+}
+
 /*int	ft_check_fd(t_var *v, t_list *fd_cmd)
 {
 	int	*fd_cast;

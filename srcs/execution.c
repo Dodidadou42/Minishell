@@ -48,9 +48,14 @@ void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 	{
 		ft_split_free(args);
 		ft_split_free(envp);
-		ft_exec_error(v, (char *)cmd->content, "command not found", 127);
+		if (ft_strchr((char *)cmd->content, '/'))
+			ft_exec_error(v, (char *)cmd->content, "No such file or directory", 127);
+		else
+			ft_exec_error(v, (char *)cmd->content, "command not found", 127);
 		exit(127);
 	}
+	if (ft_check_exec_is_dir(v, (char *)cmd->content))
+		exit(127);
 	execve(path, args, envp);
 	free(path);
 	ft_split_free(args);

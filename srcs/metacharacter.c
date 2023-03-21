@@ -80,7 +80,7 @@ void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 	if (!ft_get_exit_code(status))
 	{
 		line[*i] = '\0';
-		v->pipe_start = v->pipe_count;
+		v->pipe_start = v->pipe_count;// Marche pas
 	}
 	free(limiter);
 	fd_cmd[0] = fd_pipe[0];

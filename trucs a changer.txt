@@ -2,6 +2,7 @@ Var. Env.
 -----------
 Variable $0 qui doit etre traiter comme $? mais ne change pas car toujours = minishell (facultatif je pense)
 Actualiser $_="nom de la derniere commande" a chaque commande
+
 Acutaliser $SHLVL= (avec 1 de base 2 si on rentre dans un script 3 si ce script en lance un autre etc)
 					(je pense ont peux skip ca sera pas a la correction mais bon)
 

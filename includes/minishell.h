@@ -111,6 +111,7 @@ void	ft_assignation(t_var *v, char *a);
 void	ft_setup_export(t_var *v, char *cmd, int len, t_list *export);
 //execution
 void	ft_execution(t_var *v);
+int		ft_check_exec_is_dir(t_var *v, char *s);
 //signal
 void	ft_init_signals(t_var *v);
 void	ft_handle_ctrl_c(int signal);

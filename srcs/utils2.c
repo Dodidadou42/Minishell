@@ -86,10 +86,10 @@ t_list	*ft_cat_exception(t_var *v, int i, int count)
 
 	ret = v->fd_cmd;
 	cast = (int *)ret->content;
-	if (i < count && v->cmd[i] && !v->cmd[i]->next && !cast[0]
+	if (i < count && v->cmd[i] && !v->cmd[i]->next //&& !cast[0]
 		&& !ft_strcmp((char *)v->cmd[i]->content, "cat"))
 	{
-		while (i < count && v->cmd[i] && !v->cmd[i]->next && cast[0]
+		while (i < count && v->cmd[i] && !v->cmd[i]->next //&& cast[0] // GERER HEREDOC
 			&& !ft_strcmp((char *)v->cmd[i]->content, "cat"))
 		{
 			v->cat_exception += 1;
