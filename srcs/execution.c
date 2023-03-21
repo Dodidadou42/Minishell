@@ -42,6 +42,7 @@ void	ft_exec_builtin(t_var *v, t_list *cmd, t_list *env)
 void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 {
 	char	*path;
+	int		check;
 
 	path = ft_get_path(v->env, (char *)cmd->content);
 	if (!path)
@@ -54,13 +55,14 @@ void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 			ft_exec_error(v, (char *)cmd->content, "command not found", 127);
 		exit(127);
 	}
-	if (ft_check_exec_is_dir(v, (char *)cmd->content))
-		exit(127);
-	execve(path, args, envp);
+	check = ft_check_exec_is_dir(v, (char *)cmd->content);
+	if (!check)
+		execve(path, args, envp);
 	free(path);
 	ft_split_free(args);
 	ft_split_free(envp);
-	ft_exec_error(v, (char *)cmd->content, "permission denied", 126);
+	if (!check)
+		ft_exec_error(v, (char *)cmd->content, "permission denied", 126);
 	exit(126);
 }
 
