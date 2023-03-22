@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 01:35:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/19 12:33:33 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 00:08:11 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,11 @@ void	ft_env(t_list *env)
 {
 	while (env)
 	{
-		ft_putstr_fd((char *)env->content, STDOUT);
-		ft_putchar_fd('\n', STDOUT);
+		if (ft_strchr((char *)env->content, '='))
+		{
+			ft_putstr_fd((char *)env->content, STDOUT);
+			ft_putchar_fd('\n', STDOUT);
+		}
 		env = env->next;
 	}
 }
