@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:56:29 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 01:21:24 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 15:41:13 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ int	main(int argc, char **argv, char **envp)
 	v = ft_init_var(envp);
 	while (1)
 	{
+		g_sig->bool_ctrlc = 0;
 		v->strings->line = ft_read_command(v->strings->line, v);
 		v->fd_cmd = ft_set_fd_cmd();
 		v->pipe_start = -1;

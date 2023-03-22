@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:49:25 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/19 19:40:46 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 15:41:45 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	ft_handle_ctrlc(int signal)
 	//printf("PID dans SIG %d\n", getpid());
 	//printf("gsig->pid = %d\n", g_sig->pid);
 	(void)signal;
+	g_sig->bool_ctrlc = 1;
 	if (g_sig->pid < 0)
 	{
 		write(1, "\n", 1);

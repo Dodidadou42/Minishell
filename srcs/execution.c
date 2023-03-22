@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:48:12 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/19 20:07:37 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 15:42:53 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void	ft_finish_execution(t_var *v, int std_save[2])
 		free(v->strings->pipeline_exit_status);
 		v->strings->pipeline_exit_status = ft_itoa(ft_get_exit_code(status));
 	}
-	while (v->cat_exception--)
+	while (!g_sig->bool_ctrlc && v->cat_exception--)
 	{
 		if (!tmp[0])
 			tmp = readline("\n");

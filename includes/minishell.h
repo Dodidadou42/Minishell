@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:54:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/19 19:35:33 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 15:45:45 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ typedef struct s_signals
 	pid_t pid;
 	pid_t child;
 	int		n;
-
+	int		bool_ctrlc;
 } t_gsig;
 
 t_gsig *g_sig;
