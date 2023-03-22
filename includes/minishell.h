@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:54:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 15:45:45 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 16:47:08 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,13 @@
 
 typedef struct s_signals
 {
-	pid_t pid;
-	pid_t child;
+	pid_t	pid;
+	pid_t	child;
 	int		n;
 	int		bool_ctrlc;
-} t_gsig;
+}		t_gsig;
 
-t_gsig *g_sig;
+t_gsig	*g_sig;
 
 typedef struct s_history
 {
@@ -124,7 +124,7 @@ void	ft_execution(t_var *v);
 int		ft_check_exec_is_dir(t_var *v, char *s);
 //signal
 void	ft_init_signals(t_var *v);
-void	ft_handle_ctrl_c(int signal);
+void	ft_handle_ctrlc(int signal);
 void	ft_handle_ctrl_c_heredoc(int signal);
 void	do_nothing(int signal);
 //history
@@ -149,6 +149,4 @@ int		ft_parsing_error(t_var *v, char *token);
 int		ft_exec_error(t_var *v, char *cause, char *error, int status);
 int		ft_builtin_error(t_var *v, char *cmd, char *cause, char *error);
 
-
-void	ft_handle_ctrlc(int signal);
 #endif

@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/06 20:04:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/19 20:07:13 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 16:46:48 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,15 +81,17 @@ int	ft_pipeline_exit_status(t_var *v, char *word, int *i[2])
 
 t_list	*ft_cat_exception(t_var *v, int i, int count)
 {
-	t_list	*ret;
-	int		*cast;
+	t_list		*ret;
+	int			*cast;
+	struct stat	fd_stat;
 
 	ret = v->fd_cmd;
 	cast = (int *)ret->content;
-	if (i < count && v->cmd[i] && !v->cmd[i]->next //&& !cast[0]
+	fstat(cast[0], &fd_stat);
+	if (i < count && v->cmd[i] && !v->cmd[i]->next && !fd_stat.st_size
 		&& !ft_strcmp((char *)v->cmd[i]->content, "cat"))
 	{
-		while (i < count && v->cmd[i] && !v->cmd[i]->next //&& cast[0] // GERER HEREDOC
+		while (i < count && v->cmd[i] && !v->cmd[i]->next && !fd_stat.st_size
 			&& !ft_strcmp((char *)v->cmd[i]->content, "cat"))
 		{
 			v->cat_exception += 1;
@@ -97,6 +99,7 @@ t_list	*ft_cat_exception(t_var *v, int i, int count)
 			i += 1;
 			ret = ret->next;
 			cast = (int *)ret->content;
+			fstat(cast[0], &fd_stat);
 		}
 	}
 	return (ret);

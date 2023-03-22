@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:48:12 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 15:42:53 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 16:56:29 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 		ft_split_free(args);
 		ft_split_free(envp);
 		if (ft_strchr((char *)cmd->content, '/'))
-			ft_exec_error(v, (char *)cmd->content, "No such file or directory", 127);
+			ft_exec_error(v, (char *)cmd->content,
+				"No such file or directory", 127);
 		else
 			ft_exec_error(v, (char *)cmd->content, "command not found", 127);
 		exit(127);
@@ -63,16 +64,17 @@ void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 	ft_split_free(envp);
 	if (!check)
 		ft_exec_error(v, (char *)cmd->content, "permission denied", 126);
-	printf("yo\n");
 	exit(126);
 }
 
+	//printf("PID avant fork = %d\n", getpid());
+			//printf("PID child = %d\n", getpid());
+		//printf("PID pere = %d\n", getpid());
 int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
 {
 	int	fd_pipe[2];
 
 	pipe(fd_pipe);
-	//printf("PID avant fork = %d\n", getpid());
 	if (fd_cmd[0] != 0)
 		dup2(fd_cmd[0], STDIN);
 	if (fd_cmd[1] != 1)
@@ -88,12 +90,10 @@ int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
 		g_sig->pid = v->process;
 		if (v->process == 0)
 		{
-			//printf("PID child = %d\n", getpid());
 			close(fd_pipe[0]);
 			ft_exec_cmd(v, v->cmd[i], ft_lst_to_strtab(v->cmd[i]),
 				ft_lst_to_strtab(v->env));
 		}
-		//printf("PID pere = %d\n", getpid());
 	}
 	close(fd_pipe[1]);
 	dup2(std_save[0], STDIN);
@@ -111,7 +111,12 @@ void	ft_finish_execution(t_var *v, int std_save[2])
 		continue ;
 	close(std_save[0]);
 	close(std_save[1]);
-	if (!ft_is_builtin(v->cmd[v->pipe_start - 1]))
+	if (!v->cmd[v->pipe_start - 1])
+	{
+		free(v->strings->pipeline_exit_status);
+		v->strings->pipeline_exit_status = ft_itoa(0);
+	}
+	else if (!ft_is_builtin(v->cmd[v->pipe_start - 1]))
 	{
 		free(v->strings->pipeline_exit_status);
 		v->strings->pipeline_exit_status = ft_itoa(ft_get_exit_code(status));

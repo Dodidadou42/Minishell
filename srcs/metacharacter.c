@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 11:45:18 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/19 19:54:15 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 16:49:05 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ int	ft_handle_pipe(t_var *v, char *line, int *i)
 	return (1);
 }
 
-void	ft_heredoc_process(t_var *v, char *limiter, int fd_pipe[2], int *status)
+void	ft_heredoc_process(char *limiter, int fd_pipe[2], int *status)
 {
 	char	*tmp;
-	(void)v;
+
 	g_sig->n = 0;
 	g_sig->pid = fork();
 	if (g_sig->pid == 0)
@@ -59,6 +59,7 @@ void	ft_heredoc_process(t_var *v, char *limiter, int fd_pipe[2], int *status)
 	}
 }
 
+//voir leaks quand ctrl-c
 void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 {
 	char	*limiter;
@@ -70,11 +71,11 @@ void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 		++(*i);
 	limiter = ft_strjoin_free(ft_get_word(v, line, i, 0), "\n", 1);
 	pipe(fd_pipe);
-	ft_heredoc_process(v, limiter, fd_pipe, &status);
+	ft_heredoc_process(limiter, fd_pipe, &status);
 	if (!ft_get_exit_code(status))
 	{
 		line[*i] = '\0';
-		v->pipe_start = v->pipe_count;// Marche pas
+		v->pipe_start = v->pipe_count;
 	}
 	free(limiter);
 	fd_cmd[0] = fd_pipe[0];

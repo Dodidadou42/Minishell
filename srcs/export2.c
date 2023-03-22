@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 21:36:49 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 00:50:31 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 16:53:50 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void	ft_setup_export(t_var *v, char *cmd, int len, t_list *export)
 			ft_export_unset(v, cmd);
 	}
 }
+
 //checker unset	//if '=' dans le unset error
 void	ft_setup_unset(t_list **env, t_list *cmd, t_list *prev)
 {

@@ -6,12 +6,13 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:56:29 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 15:41:13 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 16:55:54 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+		// Voir pour mettre USER / LOGNAME / HOME dans l'env quand env -i
 t_list	*ft_init_env(char **envp)
 {
 	t_list	*env;
@@ -26,10 +27,9 @@ t_list	*ft_init_env(char **envp)
 	}
 	else
 	{
-		ft_lstadd_back(&env, ft_lstnew(
-			ft_strdup("PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin)")));
+		ft_lstadd_back(&env, ft_lstnew(ft_strdup
+				("PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin)")));
 		ft_lstadd_back(&env, ft_lstnew(ft_strjoin("PWD=", getcwd(NULL, 0))));
-		// USER / LOGNAME / HOME
 	}
 	ft_export_set_var(&env, ft_strdup("SHELL=minishell"));
 	ft_export_set_var(&env, ft_strdup("OLDPWD"));
