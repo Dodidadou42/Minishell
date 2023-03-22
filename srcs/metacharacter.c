@@ -35,14 +35,12 @@ int	ft_handle_pipe(t_var *v, char *line, int *i)
 void	ft_heredoc_process(t_var *v, char *limiter, int fd_pipe[2], int *status)
 {
 	char	*tmp;
-	pid_t	pid;
-
-	pid = fork();
-	if (pid == 0)
+	(void)v;
+	g_sig->n = 0;
+	g_sig->pid = fork();
+	if (g_sig->pid == 0)
 	{
 		close(fd_pipe[0]);
-		v->ctrlc.sa_handler = ft_handle_ctrl_c_heredoc;
-		sigaction(SIGINT, &v->ctrlc, NULL);
 		tmp = ft_strjoin_free(readline("> "), "\n", 1);
 		while (ft_strcmp(tmp, limiter))
 		{
@@ -57,7 +55,7 @@ void	ft_heredoc_process(t_var *v, char *limiter, int fd_pipe[2], int *status)
 	else
 	{
 		close(fd_pipe[1]);
-		waitpid(pid, status, 0);
+		waitpid(g_sig->pid, status, 0);
 	}
 }
 
@@ -72,11 +70,7 @@ void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 		++(*i);
 	limiter = ft_strjoin_free(ft_get_word(v, line, i, 0), "\n", 1);
 	pipe(fd_pipe);
-	v->ctrlc.sa_handler = do_nothing;
-	sigaction(SIGINT, &v->ctrlc, NULL);
 	ft_heredoc_process(v, limiter, fd_pipe, &status);
-	v->ctrlc.sa_handler = ft_handle_ctrl_c;
-	sigaction(SIGINT, &v->ctrlc, NULL);
 	if (!ft_get_exit_code(status))
 	{
 		line[*i] = '\0';

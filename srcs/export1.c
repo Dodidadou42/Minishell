@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:14:33 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 00:09:24 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/18 00:19:26 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,16 @@ void	ft_export_sort_env(t_list *env)
 	}
 }
 
-void	ft_export_print(t_list *env_cpy)
+void	ft_export_print(t_list *env_cpy, t_list *export)
 {
 	t_list	*start;
 	char	*tmp;
 	int		i;
 
-	//ft_lstadd_back(&env_cpy, ft_lstcpy(export));
+	ft_lstadd_back(&env_cpy, ft_lstcpy(export));
 	start = env_cpy;
 	ft_export_sort_env(env_cpy);
-	while (env_cpy)
+	while (env_cpy->next)
 	{
 		tmp = (char *)env_cpy->content;
 		ft_putstr_fd("declare -x ", STDOUT);
@@ -113,7 +113,7 @@ void	ft_export_set_var(t_list **env, char *cmd)
 void	ft_export(t_var *v, t_list *cmd, t_list *env)
 {
 	if (!cmd)
-		ft_export_print(ft_lstcpy(env));//, v->export);
+		ft_export_print(ft_lstcpy(env), v->export);
 	while (cmd)
 	{
 		if (!ft_check_export(v, (char *)cmd->content, "export"))

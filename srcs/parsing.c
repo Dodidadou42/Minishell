@@ -16,6 +16,9 @@ char	*ft_read_command(char *ret, t_var *v)
 {
 	if (ret)
 		free(ret);
+	g_sig->pid = -10;
+	v->ctrlc.sa_handler = ft_handle_ctrlc;
+	sigaction(SIGINT, &v->ctrlc, NULL);
 	ret = readline("minishell$> ");
 	if (!ret)
 		exit(0);

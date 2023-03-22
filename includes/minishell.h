@@ -33,6 +33,16 @@
 # define STDOUT 1
 # define STDERR 2
 
+typedef struct s_signals
+{
+	pid_t pid;
+	pid_t child;
+	int		n;
+
+} t_gsig;
+
+t_gsig *g_sig;
+
 typedef struct s_history
 {
 	char				*cmd;
@@ -139,4 +149,6 @@ int		ft_parsing_error(t_var *v, char *token);
 int		ft_exec_error(t_var *v, char *cause, char *error, int status);
 int		ft_builtin_error(t_var *v, char *cmd, char *cause, char *error);
 
+
+void	ft_handle_ctrlc(int signal);
 #endif

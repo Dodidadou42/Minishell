@@ -63,6 +63,7 @@ void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 	ft_split_free(envp);
 	if (!check)
 		ft_exec_error(v, (char *)cmd->content, "permission denied", 126);
+	printf("yo\n");
 	exit(126);
 }
 
@@ -71,6 +72,7 @@ int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
 	int	fd_pipe[2];
 
 	pipe(fd_pipe);
+	//printf("PID avant fork = %d\n", getpid());
 	if (fd_cmd[0] != 0)
 		dup2(fd_cmd[0], STDIN);
 	if (fd_cmd[1] != 1)
@@ -81,13 +83,17 @@ int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
 		ft_exec_builtin(v, v->cmd[i], v->env);
 	else if (v->cmd[i])
 	{
+		g_sig->n = 1;
 		v->process = fork();
+		g_sig->pid = v->process;
 		if (v->process == 0)
 		{
+			//printf("PID child = %d\n", getpid());
 			close(fd_pipe[0]);
 			ft_exec_cmd(v, v->cmd[i], ft_lst_to_strtab(v->cmd[i]),
 				ft_lst_to_strtab(v->env));
 		}
+		//printf("PID pere = %d\n", getpid());
 	}
 	close(fd_pipe[1]);
 	dup2(std_save[0], STDIN);
