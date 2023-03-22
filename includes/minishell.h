@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:54:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 16:47:08 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 18:12:51 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,12 @@ void	ft_assignation(t_var *v, char *a);
 void	ft_setup_export(t_var *v, char *cmd, int len, t_list *export);
 //execution
 void	ft_execution(t_var *v);
+//execution_utils
+int		ft_is_builtin(t_list *cmd);
 int		ft_check_exec_is_dir(t_var *v, char *s);
+t_list	*ft_cat_exception(t_var *v, int i, int count);
+void	ft_get_pipeline_exit_code(t_var *v, int status);
+void	ft_setup_fd_pipe(t_var *v, int fd_cmd[2], int fd_pipe[2], int i);
 //signal
 void	ft_init_signals(t_var *v);
 void	ft_handle_ctrlc(int signal);
@@ -134,16 +139,13 @@ void	ft_get_history(char *line, t_var *v);
 char	**ft_lst_to_strtab(t_list *lst);
 int		ft_count_char(char *s, char c);
 char	*ft_getenv(t_list *env, char *name);
-int		ft_is_builtin(t_list *cmd);
-char	*ft_get_path(t_list *env, char *cmd);
 t_list	*ft_set_fd_cmd(void);
 void	ft_close_fd_cmd(t_list *fd_cmd);
 char	*ft_get_metachar(char *line, int *i);
 int		ft_pipeline_exit_status(t_var *v, char *word, int *i[2]);
-t_list	*ft_cat_exception(t_var *v, int i, int count);
 int		ft_get_exit_code(int status);
+char	*ft_get_path(t_list *env, char *cmd);
 int		*ft_open_file(char *metachar, char *filename, int fd_cmd[2]);
-char	*ft_free_null(char *s);
 //errors
 int		ft_parsing_error(t_var *v, char *token);
 int		ft_exec_error(t_var *v, char *cause, char *error, int status);

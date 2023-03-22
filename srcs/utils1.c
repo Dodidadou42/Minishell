@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:18:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/17 21:59:42 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 17:25:30 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,42 +64,29 @@ char	*ft_getenv(t_list *env, char *name)
 	return (NULL);
 }
 
-int	ft_is_builtin(t_list *cmd)
+t_list	*ft_set_fd_cmd(void)
 {
-	if (!ft_strcmp((char *)cmd->content, "echo")
-		|| !ft_strcmp((char *)cmd->content, "cd")
-		|| !ft_strcmp((char *)cmd->content, "pwd")
-		|| !ft_strcmp((char *)cmd->content, "export")
-		|| !ft_strcmp((char *)cmd->content, "unset")
-		|| !ft_strcmp((char *)cmd->content, "env")
-		|| !ft_strcmp((char *)cmd->content, "history")
-		|| !ft_strcmp((char *)cmd->content, "exit")
-		|| (ft_strchr((char *)cmd->content, '=')
-			&& ft_check_export(NULL, (char *)cmd->content, NULL)))
-		return (1);
-	return (0);
+	t_list	*fd_cmd;
+	int		*cast;
+
+	fd_cmd = ft_lstnew(malloc(sizeof(int) * 2));
+	cast = (int *)fd_cmd->content;
+	cast[0] = STDIN;
+	cast[1] = STDOUT;
+	return (fd_cmd);
 }
 
-char	*ft_get_path(t_list *env, char *cmd)
+void	ft_close_fd_cmd(t_list *fd_cmd)
 {
-	char	**paths;	
-	char	*tmp;
-	int		i;
+	int	*fd;
 
-	if (!access(cmd, F_OK) && ft_strchr(cmd, '/'))
-		return (ft_strdup(cmd));
-	paths = ft_split(ft_getenv(env, "PATH"), ':');
-	i = -1;
-	while (paths[++i])
+	while (fd_cmd)
 	{
-		tmp = ft_strjoin_free(paths[i], ft_strjoin("/", cmd), 2);
-		if (!access(tmp, F_OK))
-		{
-			ft_split_free(paths);
-			return (tmp);
-		}
-		free(tmp);
+		fd = (int *)fd_cmd->content;
+		if (fd[0] != 0)
+			close(fd[0]);
+		if (fd[1] != 1)
+			close(fd[1]);
+		fd_cmd = fd_cmd->next;
 	}
-	ft_split_free(paths);
-	return (NULL);
 }

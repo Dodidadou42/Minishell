@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:48:12 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 16:56:29 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 18:13:34 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,7 @@ int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
 	int	fd_pipe[2];
 
 	pipe(fd_pipe);
-	if (fd_cmd[0] != 0)
-		dup2(fd_cmd[0], STDIN);
-	if (fd_cmd[1] != 1)
-		dup2(fd_cmd[1], STDOUT);
-	else if (i < v->pipe_count)
-		dup2(fd_pipe[1], STDOUT);
+	ft_setup_fd_pipe(v, fd_cmd, fd_pipe, i);
 	if (v->cmd[i] && ft_is_builtin(v->cmd[i]))
 		ft_exec_builtin(v, v->cmd[i], v->env);
 	else if (v->cmd[i])
@@ -111,16 +106,7 @@ void	ft_finish_execution(t_var *v, int std_save[2])
 		continue ;
 	close(std_save[0]);
 	close(std_save[1]);
-	if (!v->cmd[v->pipe_start - 1])
-	{
-		free(v->strings->pipeline_exit_status);
-		v->strings->pipeline_exit_status = ft_itoa(0);
-	}
-	else if (!ft_is_builtin(v->cmd[v->pipe_start - 1]))
-	{
-		free(v->strings->pipeline_exit_status);
-		v->strings->pipeline_exit_status = ft_itoa(ft_get_exit_code(status));
-	}
+	ft_get_pipeline_exit_code(v, status);
 	while (!g_sig->bool_ctrlc && v->cat_exception--)
 	{
 		if (!tmp[0])

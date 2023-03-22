@@ -6,38 +6,11 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/06 20:04:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 16:46:48 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 18:10:14 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-t_list	*ft_set_fd_cmd(void)
-{
-	t_list	*fd_cmd;
-	int		*cast;
-
-	fd_cmd = ft_lstnew(malloc(sizeof(int) * 2));
-	cast = (int *)fd_cmd->content;
-	cast[0] = STDIN;
-	cast[1] = STDOUT;
-	return (fd_cmd);
-}
-
-void	ft_close_fd_cmd(t_list *fd_cmd)
-{
-	int	*fd;
-
-	while (fd_cmd)
-	{
-		fd = (int *)fd_cmd->content;
-		if (fd[0] != 0)
-			close(fd[0]);
-		if (fd[1] != 1)
-			close(fd[1]);
-		fd_cmd = fd_cmd->next;
-	}
-}
 
 char	*ft_get_metachar(char *line, int *i)
 {
@@ -79,28 +52,50 @@ int	ft_pipeline_exit_status(t_var *v, char *word, int *i[2])
 	return (0);
 }
 
-t_list	*ft_cat_exception(t_var *v, int i, int count)
+int	ft_get_exit_code(int status)
 {
-	t_list		*ret;
-	int			*cast;
-	struct stat	fd_stat;
-
-	ret = v->fd_cmd;
-	cast = (int *)ret->content;
-	fstat(cast[0], &fd_stat);
-	if (i < count && v->cmd[i] && !v->cmd[i]->next && !fd_stat.st_size
-		&& !ft_strcmp((char *)v->cmd[i]->content, "cat"))
+	if (status == 0)
+		return (0);
+	else if (status > 0)
+		return (status / 256);
+	else
 	{
-		while (i < count && v->cmd[i] && !v->cmd[i]->next && !fd_stat.st_size
-			&& !ft_strcmp((char *)v->cmd[i]->content, "cat"))
-		{
-			v->cat_exception += 1;
-			v->pipe_start += 1;
-			i += 1;
-			ret = ret->next;
-			cast = (int *)ret->content;
-			fstat(cast[0], &fd_stat);
-		}
+		status = -status - 1;
+		return (255 - (status / 256));
 	}
-	return (ret);
+}
+
+char	*ft_get_path(t_list *env, char *cmd)
+{
+	char	**paths;	
+	char	*tmp;
+	int		i;
+
+	if (!access(cmd, F_OK) && ft_strchr(cmd, '/'))
+		return (ft_strdup(cmd));
+	paths = ft_split(ft_getenv(env, "PATH"), ':');
+	i = -1;
+	while (paths[++i])
+	{
+		tmp = ft_strjoin_free(paths[i], ft_strjoin("/", cmd), 2);
+		if (!access(tmp, F_OK))
+		{
+			ft_split_free(paths);
+			return (tmp);
+		}
+		free(tmp);
+	}
+	ft_split_free(paths);
+	return (NULL);
+}
+
+int	*ft_open_file(char *metachar, char *filename, int fd_cmd[2])
+{
+	if (!ft_strcmp(metachar, "<"))
+		fd_cmd[0] = open(filename, O_RDONLY);
+	else if (!ft_strcmp(metachar, ">>"))
+		fd_cmd[1] = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	else if (!ft_strcmp(metachar, ">"))
+		fd_cmd[1] = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	return (fd_cmd);
 }
