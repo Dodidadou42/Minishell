@@ -6,29 +6,43 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:56:29 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/19 19:35:39 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 01:21:24 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_var	*ft_init_var(char **envp)
+t_list	*ft_init_env(char **envp)
 {
-	t_var	*v;
+	t_list	*env;
 	int		i;
 
-	g_sig = malloc(sizeof(t_gsig));
-	v = malloc(sizeof(t_var));
-	v->env = NULL;
-	v->export = NULL;
+	env = NULL;
 	if (envp[0])
 	{
 		i = -1;
 		while (envp[++i])
-			ft_lstadd_back(&v->env, ft_lstnew(ft_strdup(envp[i])));
+			ft_lstadd_back(&env, ft_lstnew(ft_strdup(envp[i])));
 	}
-	if (!ft_getenv(v->env, "OLDPWD"))
-		ft_assignation(v, "OLDPWD");
+	else
+	{
+		ft_lstadd_back(&env, ft_lstnew(
+			ft_strdup("PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin)")));
+		ft_lstadd_back(&env, ft_lstnew(ft_strjoin("PWD=", getcwd(NULL, 0))));
+		// USER / LOGNAME / HOME
+	}
+	ft_export_set_var(&env, ft_strdup("SHELL=minishell"));
+	ft_export_set_var(&env, ft_strdup("OLDPWD"));
+	return (env);
+}
+
+t_var	*ft_init_var(char **envp)
+{
+	t_var	*v;
+
+	g_sig = malloc(sizeof(t_gsig));
+	v = malloc(sizeof(t_var));
+	v->env = ft_init_env(envp);
 	v->path = NULL;
 	v->strings = malloc(sizeof(t_strings));
 	v->strings->line = NULL;

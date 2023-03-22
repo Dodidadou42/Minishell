@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 21:36:49 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/17 21:04:55 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/22 00:50:31 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,7 @@ void	ft_assignation(t_var *v, char *a)
 
 	tmp = ft_getenv(v->env, a);
 	if (tmp)
-	{
 		ft_export_set_var(&v->env, ft_strdup(a));
-		ft_export_unset(v, a);
-	}
 	else
 		ft_export_set_var(&v->export, ft_strdup(a));
 }
@@ -52,8 +49,8 @@ void	ft_setup_export(t_var *v, char *cmd, int len, t_list *export)
 	if (!ft_strchr(cmd, '='))
 	{
 		if (!ft_getenv(v->export, cmd))
-			ft_export_set_var(&v->export, ft_strdup(cmd));
-		else if (ft_getenv(v->export, cmd)[0])
+			ft_export_set_var(&v->env, ft_strdup(cmd));
+		else
 		{
 			while (export)
 			{
@@ -73,7 +70,7 @@ void	ft_setup_export(t_var *v, char *cmd, int len, t_list *export)
 			ft_export_unset(v, cmd);
 	}
 }
-
+//checker unset	//if '=' dans le unset error
 void	ft_setup_unset(t_list **env, t_list *cmd, t_list *prev)
 {
 	char	*tmp;
