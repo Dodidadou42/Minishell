@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/03 10:46:26 by ddychus           #+#    #+#             */
-/*   Updated: 2023/03/17 22:04:33 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/23 18:08:52 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,30 +14,8 @@
 
 void	ft_update_env(t_list *env, t_var *v)
 {
-	t_list	*tmp;
-
-	tmp = env;
-	while (tmp)
-	{
-		if (!ft_strncmp((char *)tmp->content, "PWD=", 4))
-		{
-			free(tmp->content);
-			tmp->content = ft_strdup(v->strings->pwd);
-		}
-		tmp = tmp->next;
-	}
-	tmp = env;
-	while (tmp)
-	{
-		if (!ft_strncmp((char *)tmp->content, "OLDPWD=", 7))
-		{
-			free(tmp->content);
-			tmp->content = ft_strdup(v->strings->old_pwd);
-		}
-		tmp = tmp->next;
-	}
-	if (!tmp)
-		ft_lstadd_back(&env, ft_lstnew(ft_strdup(v->strings->old_pwd)));
+	ft_export_set_var(&env, ft_strdup(v->strings->pwd));
+	ft_export_set_var(&env, ft_strdup(v->strings->old_pwd));
 }
 
 int	ft_cd_swap(t_var *v, char *path)

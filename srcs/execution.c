@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:48:12 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 18:13:34 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/28 01:12:54 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,9 +98,10 @@ int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
 
 void	ft_finish_execution(t_var *v, int std_save[2])
 {
-	char	*tmp;
 	int		status;
+	char	*tmp;
 
+	tmp = malloc(sizeof(char) * 4096);
 	waitpid(v->process, &status, 0);
 	while (wait(NULL) > 0)
 		continue ;
@@ -108,15 +109,8 @@ void	ft_finish_execution(t_var *v, int std_save[2])
 	close(std_save[1]);
 	ft_get_pipeline_exit_code(v, status);
 	while (!g_sig->bool_ctrlc && v->cat_exception--)
-	{
-		if (!tmp[0])
-			tmp = readline("\n");
-		else
-			tmp = readline("");
-		if (!v->cat_exception && !tmp[0])
-			write(1, "\n", 1);
-		free(tmp);
-	}
+		read(STDIN, tmp, 4096);
+	free(tmp);
 }
 
 void	ft_execution(t_var *v)

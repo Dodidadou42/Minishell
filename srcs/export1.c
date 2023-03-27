@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:14:33 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 16:49:33 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/03/23 18:04:23 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,15 +97,14 @@ void	ft_export_set_var(t_list **env, char *cmd)
 	{
 		cast = (char *)tmp->content;
 		if (!ft_strncmp(cmd, cast, len) && (!cast[len] || cast[len] == '='))
+		{
+			free(tmp->content);
+			tmp->content = (void *)cmd;
 			break ;
+		}
 		tmp = tmp->next;
 	}
-	if (tmp)
-	{
-		free(tmp->content);
-		tmp->content = (void *)cmd;
-	}
-	else
+	if (!tmp)
 		ft_lstadd_back(env, ft_lstnew(cmd));
 }
 
