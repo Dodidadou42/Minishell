@@ -14,8 +14,16 @@
 
 void	ft_handle_ctrl_slash(int signal)
 {	
+
 	(void)signal;
-	rl_redisplay();
+	if (g_sig->n == 1)
+	{
+		g_sig->n = 0;
+		write(1, "^\\Quit: 3\n", 11);
+		kill(g_sig->pid, SIGTERM);
+	}
+	else
+		rl_redisplay();
 }
 
 void	do_nothing(int signal)
@@ -23,8 +31,6 @@ void	do_nothing(int signal)
 	(void)signal;
 }
 
-	//printf("PID dans SIG %d\n", getpid());
-	//printf("gsig->pid = %d\n", g_sig->pid);
 void	ft_handle_ctrlc(int signal)
 {
 	(void)signal;
@@ -43,8 +49,9 @@ void	ft_handle_ctrlc(int signal)
 	}
 	else if (g_sig->n == 1)
 	{
+		g_sig->n = 0;
 		write(1, "^C\n", 3);
-		kill(g_sig->pid, SIGINT);
+		kill(g_sig->pid, SIGTERM);
 	}
 }
 

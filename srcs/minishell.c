@@ -51,7 +51,7 @@ t_var	*ft_init_var(char **envp)
 	v->strings->pwd = ft_strjoin("PWD=", ft_getenv(v->env, "PWD"));
 	v->strings->old_pwd = ft_strjoin("OLDPWD=", ft_getenv(v->env, "OLDPWD"));
 	v->strings->root = ft_strdup(ft_getenv(v->env, "HOME"));
-	ft_init_signals(v);
+	
 	return (v);
 }
 
@@ -76,6 +76,7 @@ int	main(int argc, char **argv, char **envp)
 	v = ft_init_var(envp);
 	while (1)
 	{
+		ft_init_signals(v);
 		g_sig->bool_ctrlc = 0;
 		v->strings->line = ft_read_command(v->strings->line, v);
 		v->fd_cmd = ft_set_fd_cmd();
