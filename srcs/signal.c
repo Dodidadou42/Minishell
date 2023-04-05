@@ -16,14 +16,7 @@ void	ft_handle_ctrl_slash(int signal)
 {	
 
 	(void)signal;
-	if (g_sig->n == 1)
-	{
-		g_sig->n = 0;
-		write(1, "^\\Quit: 3\n", 11);
-		kill(g_sig->pid, SIGTERM);
-	}
-	else
-		rl_redisplay();
+	rl_redisplay();
 }
 
 void	do_nothing(int signal)
