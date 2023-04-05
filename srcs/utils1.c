@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:18:35 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 17:25:30 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/04/05 04:25:50 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,19 +74,4 @@ t_list	*ft_set_fd_cmd(void)
 	cast[0] = STDIN;
 	cast[1] = STDOUT;
 	return (fd_cmd);
-}
-
-void	ft_close_fd_cmd(t_list *fd_cmd)
-{
-	int	*fd;
-
-	while (fd_cmd)
-	{
-		fd = (int *)fd_cmd->content;
-		if (fd[0] != 0)
-			close(fd[0]);
-		if (fd[1] != 1)
-			close(fd[1]);
-		fd_cmd = fd_cmd->next;
-	}
 }

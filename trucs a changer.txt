@@ -11,5 +11,5 @@ Acutaliser $SHLVL= (avec 1 de base 2 si on rentre dans un script 3 si ce script 
 peut etre code d'erreur chiant si enchainement d'erreur de >> / > / <
 message d'erreur "is a directory / No such file or directory" voir ensemble (quand $PWD ou ./missing.out)
 
-j'ai voulu fix le truc heredoc + ctrl-c + pipe mais chez moi ca marche donc je
-pense a lecole ca doit pas rentrer dans la condition je regarderai sur place, et les signaux bug pareille par contre
+J'ai refait l'exécution même si ça reste sur le même principe j'ai essayé de te faire ça un peu plus propre
+De ce que j'ai testé, c'est ok, mais hésite pas a essayer de la casser, tu me tiens au courant, bisous <3

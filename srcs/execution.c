@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/08 17:48:12 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/28 01:12:54 by mpelazza         ###   ########.fr       */
+/*   Created: 2023/04/05 02:41:47 by mpelazza          #+#    #+#             */
+/*   Updated: 2023/04/05 05:02:56 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,77 +67,56 @@ void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 	exit(126);
 }
 
-	//printf("PID avant fork = %d\n", getpid());
-			//printf("PID child = %d\n", getpid());
-		//printf("PID pere = %d\n", getpid());
-int	ft_setup_n_launch(t_var *v, int std_save[2], int fd_cmd[2], int i)
+void	ft_exec_fork(t_var *v, int fd_pipe[2], int i)
 {
-	int	fd_pipe[2];
-
-	pipe(fd_pipe);
-	ft_setup_fd_pipe(v, fd_cmd, fd_pipe, i);
-	if (v->cmd[i] && ft_is_builtin(v->cmd[i]))
-		ft_exec_builtin(v, v->cmd[i], v->env);
-	else if (v->cmd[i])
+	g_sig->n = 1;
+	v->process = fork();
+	g_sig->pid = v->process;
+	if (v->process == 0)
 	{
-		g_sig->n = 1;
-		v->process = fork();
-		g_sig->pid = v->process;
-		if (v->process == 0)
-		{
-			close(fd_pipe[0]);
-			ft_exec_cmd(v, v->cmd[i], ft_lst_to_strtab(v->cmd[i]),
-				ft_lst_to_strtab(v->env));
-		}
+		close(fd_pipe[0]);
+		ft_exec_cmd(v, v->cmd[i], ft_lst_to_strtab(v->cmd[i]),
+			ft_lst_to_strtab(v->env));
 	}
-	close(fd_pipe[1]);
-	dup2(std_save[0], STDIN);
-	dup2(std_save[1], STDOUT);
-	return (fd_pipe[0]);
 }
 
-void	ft_finish_execution(t_var *v, int std_save[2])
+void	ft_setup_exec(t_var *v, t_list *fd_cmd, int std_save[2], int i)
 {
-	int		status;
-	char	*tmp;
+	int	fd_pipe[2];
+	int	*fd_tmp;
+	int	tmp;
 
-	tmp = malloc(sizeof(char) * 4096);
-	waitpid(v->process, &status, 0);
-	while (wait(NULL) > 0)
-		continue ;
-	close(std_save[0]);
-	close(std_save[1]);
-	ft_get_pipeline_exit_code(v, status);
-	while (!g_sig->bool_ctrlc && v->cat_exception--)
-		read(STDIN, tmp, 4096);
-	free(tmp);
+	while (++i <= v->pipe_count)
+	{
+		pipe(fd_pipe);
+		ft_setup_pipe(v, (int *)fd_cmd->content, fd_pipe, i);
+		if (v->cmd[i] && ft_is_builtin(v->cmd[i]))
+			ft_exec_builtin(v, v->cmd[i], v->env);
+		else if (v->cmd[i])
+			ft_exec_fork(v, fd_pipe, i);
+		close(fd_pipe[1]);
+		if (i > v->pipe_start + 1)
+			close(tmp);
+		dup2(std_save[0], STDIN);
+		dup2(std_save[1], STDOUT);
+		fd_tmp = (int *)fd_cmd->content;
+		fd_cmd = fd_cmd->next;
+		tmp = ft_pipe_redir(fd_cmd, fd_pipe);
+	}
 }
 
 void	ft_execution(t_var *v)
 {
-	t_list	*fd_cmd;
-	int		*fd_cmd_cast;
-	int		std_save[2];
-	int		fd_pipe_out;
+	int	std_save[2];
+	int	status;
 
 	std_save[0] = dup(STDIN);
 	std_save[1] = dup(STDOUT);
-	fd_cmd = ft_cat_exception(v, v->pipe_start + 1, v->pipe_count);
-	while (++(v->pipe_start) <= v->pipe_count)
-	{
-		fd_pipe_out = ft_setup_n_launch(v, std_save,
-				(int *)fd_cmd->content, v->pipe_start);
-		fd_cmd = fd_cmd->next;
-		if (fd_cmd)
-		{
-			fd_cmd_cast = (int *)fd_cmd->content;
-			if (fd_cmd_cast[0] == 0)
-				fd_cmd_cast[0] = fd_pipe_out;
-			else
-				close(fd_pipe_out);
-		}
-		else
-			close(fd_pipe_out);
-	}
-	ft_finish_execution(v, std_save);
+	ft_setup_exec(v, v->fd_cmd, std_save, v->pipe_start);
+	waitpid(v->process, &status, 0);
+	while (wait(NULL) > 0)
+		continue ;
+	ft_get_pipeline_exit_code(v, status);
+	close(std_save[0]);
+	close(std_save[1]);
 }

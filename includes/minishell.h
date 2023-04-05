@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:54:48 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 18:12:51 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/04/05 05:02:08 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,9 +124,9 @@ void	ft_execution(t_var *v);
 //execution_utils
 int		ft_is_builtin(t_list *cmd);
 int		ft_check_exec_is_dir(t_var *v, char *s);
-t_list	*ft_cat_exception(t_var *v, int i, int count);
 void	ft_get_pipeline_exit_code(t_var *v, int status);
-void	ft_setup_fd_pipe(t_var *v, int fd_cmd[2], int fd_pipe[2], int i);
+void	ft_setup_pipe(t_var *v, int fd_cmd[2], int fd_pipe[2], int i);
+int		ft_pipe_redir(t_list *fd_cmd, int fd_pipe[2]);
 //signal
 void	ft_init_signals(t_var *v);
 void	ft_handle_ctrlc(int signal);
