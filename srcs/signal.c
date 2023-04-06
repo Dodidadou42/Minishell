@@ -13,8 +13,7 @@
 #include "../includes/minishell.h"
 
 void	ft_handle_ctrl_slash(int signal)
-{	
-
+{
 	(void)signal;
 	rl_redisplay();
 }

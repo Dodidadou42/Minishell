@@ -46,6 +46,9 @@ ${NAME}:	${OBJS}
 			@tput cuu1 && tput dl1
 			@echo "${GREEN}Minishell OK${WHITE}"
 
+debug: CFLAGS+=-g
+debug: re
+
 check_brew:
 	@if test ! $$(which brew); then \
 	    echo "${RED}Brew is not installed. ${WHITE}Installing now..."; \

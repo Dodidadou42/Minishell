@@ -31,16 +31,24 @@ void	ft_clear_history(t_var *v)
 	v->histo = NULL;
 }
 
-void	ft_delete_offset_next(t_histo *tmp, t_histo *tmplast)
+void	ft_delete_offset_next(t_histo *tmp, t_histo *tmplast, t_var *v)
 {
-	while (tmp->next)
+	t_histo	*del;
+	int		i;
+
+	i = 0;
+	if (tmplast && tmp->next)
+		tmplast->next = tmp->next;
+	else if (tmplast && !tmp->next)
+		tmplast->next = NULL;
+	else if (!tmplast)
+		v->histo = tmp->next;
+	del = v->histo;
+	while (del)
 	{
-		free(tmp->cmd);
-		tmp->cmd = ft_strdup(tmp->next->cmd);
-		tmplast = tmp;
-		tmp = tmp->next;
+		del->offset = ++i;
+		del = del->next;
 	}
-	tmplast->next = NULL;
 	free(tmp->cmd);
 	free(tmp);
 }
@@ -51,6 +59,7 @@ void	ft_delete_offset(t_var *v, t_list *cmd)
 	t_histo	*tmplast;
 
 	tmp = v->histo;
+	tmplast = NULL;
 	if (!cmd->next)
 		ft_builtin_error(v, "history", cmd->content,
 			"option requires an argument");
@@ -65,7 +74,7 @@ void	ft_delete_offset(t_var *v, t_list *cmd)
 			ft_builtin_error(v, "history", cmd->next->content,
 				"history position out of range");
 		else
-			ft_delete_offset_next(tmp, tmplast);
+			ft_delete_offset_next(tmp, tmplast, v);
 	}
 }
 

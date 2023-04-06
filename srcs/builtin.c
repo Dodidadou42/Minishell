@@ -77,8 +77,14 @@ void	ft_exit(t_var *v, t_list *cmd)
 	char	*cast;
 	int		i;
 
-	if (!cmd)
-		exit(ft_atoi(v->strings->pipeline_exit_status));
+	if (!cmd || cmd->next)
+	{
+		ft_putstr_fd("exit\n", STDOUT);
+		if (!cmd)
+			exit(ft_atoi(v->strings->pipeline_exit_status));
+		ft_exec_error(v, "exit", "too many arguments", 1);
+		return ;
+	}
 	cast = (char *)cmd->content;
 	i = -1;
 	while (cast[++i])
@@ -91,12 +97,7 @@ void	ft_exit(t_var *v, t_list *cmd)
 			exit(ft_atoi(v->strings->pipeline_exit_status));
 		}
 	}
-	if (cmd->next)
-	{
-		ft_putstr_fd("exit\n", STDOUT);
-		ft_exec_error(v, "exit", "too many arguments", 1);
-		return ;
-	}
+	ft_putstr_fd("exit\n", STDOUT);
 	exit(ft_atoi(cast));
 }
 //system("leaks minishell");
