@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:24:06 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/04/05 05:01:54 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/04/10 15:35:13 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,12 @@ int	ft_check_exec_is_dir(t_var *v, char *s)
 
 void	ft_get_pipeline_exit_code(t_var *v, int status)
 {
-	if (!v->cmd[v->pipe_count - 1])
+	if (!v->cmd[v->pipe_count])
 	{
 		free(v->strings->pipeline_exit_status);
 		v->strings->pipeline_exit_status = ft_itoa(0);
 	}
-	else if (!ft_is_builtin(v->cmd[v->pipe_count - 1]))
+	else if (!ft_is_builtin(v->cmd[v->pipe_count]))
 	{
 		free(v->strings->pipeline_exit_status);
 		v->strings->pipeline_exit_status = ft_itoa(ft_get_exit_code(status));
