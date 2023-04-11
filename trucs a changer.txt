@@ -19,3 +19,10 @@ De ce que j'ai testé, c'est ok, mais hésite pas a essayer de la casser, tu me 
 
 env -i
 ls |> fichier ls >| fichier
+
+bash-3.2$ .
+bash: .: filename argument required
+.: usage: . filename [arguments]
+bash-3.2$ ..
+bash: ..: command not found
+bash-3.2$
