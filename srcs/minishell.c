@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:56:29 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/04/05 04:25:18 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/04/11 15:34:52 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ t_var	*ft_init_var(char **envp)
 	g_sig = malloc(sizeof(t_gsig));
 	v = malloc(sizeof(t_var));
 	v->env = ft_init_env(envp);
+	v->export = NULL;
 	v->path = NULL;
 	v->strings = malloc(sizeof(t_strings));
 	v->strings->line = NULL;
@@ -51,6 +52,7 @@ t_var	*ft_init_var(char **envp)
 	v->strings->pwd = ft_strjoin("PWD=", ft_getenv(v->env, "PWD"));
 	v->strings->old_pwd = ft_strjoin("OLDPWD=", ft_getenv(v->env, "OLDPWD"));
 	v->strings->root = ft_strdup(ft_getenv(v->env, "HOME"));
+	ft_init_signals(v);
 	return (v);
 }
 
@@ -75,7 +77,7 @@ int	main(int argc, char **argv, char **envp)
 	v = ft_init_var(envp);
 	while (1)
 	{
-		ft_init_signals(v);
+		
 		g_sig->bool_ctrlc = 0;
 		v->strings->line = ft_read_command(v->strings->line, v);
 		v->fd_cmd = ft_set_fd_cmd();
