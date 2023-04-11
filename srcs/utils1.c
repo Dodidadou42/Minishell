@@ -12,6 +12,18 @@
 
 #include "../includes/minishell.h"
 
+void	ft_check_readline(char *ret, t_var *v)
+{
+	if (!ret)
+	{
+		if (v->bool_env)
+			printf("\033[Aminishell$> exit\n");
+		else
+			printf("exit\n");
+		exit(0);
+	}
+}
+
 char	**ft_lst_to_strtab(t_list *lst)
 {
 	char	**tab;

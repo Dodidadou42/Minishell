@@ -13,7 +13,7 @@
 #include "../includes/minishell.h"
 
 		// Voir pour mettre USER / LOGNAME / HOME dans l'env quand env -i
-t_list	*ft_init_env(char **envp)
+t_list	*ft_init_env(char **envp, t_var *v)
 {
 	t_list	*env;
 	int		i;
@@ -31,6 +31,7 @@ t_list	*ft_init_env(char **envp)
 	}
 	else
 	{
+		v->bool_env = 0;
 		ft_lstadd_back(&env, ft_lstnew(ft_strdup
 				("PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin)")));
 		ft_lstadd_back(&env, ft_lstnew(ft_strjoin("PWD=", getcwd(NULL, 0))));
@@ -46,7 +47,8 @@ t_var	*ft_init_var(char **envp)
 
 	g_sig = malloc(sizeof(t_gsig));
 	v = malloc(sizeof(t_var));
-	v->env = ft_init_env(envp);
+	v->bool_env = 1;
+	v->env = ft_init_env(envp, v);
 	v->export = NULL;
 	v->path = NULL;
 	v->strings = malloc(sizeof(t_strings));
@@ -55,7 +57,7 @@ t_var	*ft_init_var(char **envp)
 	v->histo = NULL;
 	v->strings->pwd = ft_strjoin("PWD=", ft_getenv(v->env, "PWD"));
 	v->strings->old_pwd = ft_strjoin("OLDPWD=", ft_getenv(v->env, "OLDPWD"));
-	v->strings->root = ft_strdup(ft_getenv(v->env, "HOME"));
+	v->strings->root = ft_strjoin("/Users/", ft_getenv(v->env, "USER"));
 	ft_init_signals(v);
 	return (v);
 }
@@ -81,7 +83,6 @@ int	main(int argc, char **argv, char **envp)
 	v = ft_init_var(envp);
 	while (1)
 	{
-		
 		g_sig->bool_ctrlc = 0;
 		v->strings->line = ft_read_command(v->strings->line, v);
 		v->fd_cmd = ft_set_fd_cmd();

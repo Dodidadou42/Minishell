@@ -79,6 +79,7 @@ typedef struct s_var
 	int					pipe_start;
 	int					pipe_count;
 	int					cat_exception;
+	int					bool_env;
 
 	struct sigaction	ctrlc;
 }			t_var;
@@ -94,6 +95,7 @@ t_list	**ft_parse_command(t_var *v);
 int		ft_find_end_quote(char *s, int index);
 int		ft_env_var_name_len(char *name);
 int		ft_word_len(t_var *v, t_list *env, char *line);
+void	ft_check_readline(char *ret, t_var *v);
 //metacharacters
 int		ft_handle_metachar(t_var *v, char *line, int *i);
 //builtin

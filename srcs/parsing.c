@@ -20,20 +20,12 @@ char	*ft_read_command(char *ret, t_var *v)
 	v->ctrlc.sa_handler = ft_handle_ctrlc;
 	sigaction(SIGINT, &v->ctrlc, NULL);
 	ret = readline("minishell$> ");
-	if (!ret)
-	{
-		printf("\033[Aminishell$> exit\n");
-		exit(0);
-	}
+	ft_check_readline(ret, v);
 	while (!ret[0])
 	{
 		free(ret);
 		ret = readline("minishell$> ");
-		if (!ret)
-		{
-			printf("\033[Aminishell$> exit\n");
-			exit(0);
-		}
+		ft_check_readline(ret, v);
 	}
 	add_history(ret);
 	ft_get_history(ret, v);

@@ -81,7 +81,7 @@ char	*ft_get_real_path(t_var *v, t_list *cmd, t_list *env)
 {
 	char	*path;
 
-	if (!cmd)
+	if (!cmd || (!ft_strncmp(cmd->content, "~", 1) && !v->bool_env))
 	{
 		if (ft_getenv(env, "HOME"))
 			path = ft_strdup(ft_getenv(env, "HOME"));
