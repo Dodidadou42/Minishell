@@ -21,13 +21,19 @@ char	*ft_read_command(char *ret, t_var *v)
 	sigaction(SIGINT, &v->ctrlc, NULL);
 	ret = readline("minishell$> ");
 	if (!ret)
+	{
+		printf("\033[Aminishell$> exit\n");
 		exit(0);
+	}
 	while (!ret[0])
 	{
 		free(ret);
 		ret = readline("minishell$> ");
 		if (!ret)
+		{
+			printf("\033[Aminishell$> exit\n");
 			exit(0);
+		}
 	}
 	add_history(ret);
 	ft_get_history(ret, v);

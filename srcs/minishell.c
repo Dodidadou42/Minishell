@@ -23,7 +23,11 @@ t_list	*ft_init_env(char **envp)
 	{
 		i = -1;
 		while (envp[++i])
+		{
+			if (!ft_strncmp(envp[i], "SHLVL=", 6))
+				envp[i][6]++;
 			ft_lstadd_back(&env, ft_lstnew(ft_strdup(envp[i])));
+		}
 	}
 	else
 	{
