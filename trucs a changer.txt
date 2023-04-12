@@ -26,3 +26,5 @@ bash: .: filename argument required
 bash-3.2$ ..
 bash: ..: command not found
 bash-3.2$
+
+env -i : ctrl-L marche pas je pense osef

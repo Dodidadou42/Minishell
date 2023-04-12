@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:24:06 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/04/10 15:35:13 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/04/12 04:39:14 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,22 @@ int	ft_is_builtin(t_list *cmd)
 int	ft_check_exec_is_dir(t_var *v, char *s)
 {
 	DIR	*dir;
+	int	ret;
 
 	dir = opendir(s);
 	if (dir)
 	{
-		ft_exec_error(v, s, "is a directory", 127);
+		if (s[0] == '.' && !s[1])
+		{
+			ret = ft_exec_error(v, s, "filename argument required", 2);
+			ft_putstr_fd(".: usage: . filename [arguments]\n", STDERR);
+		}
+		else if (s[0] == '.' && s[1] == '.' && !s[2])
+			ret = ft_exec_error(v, s, "command not found", 127);
+		else
+			ret = ft_exec_error(v, s, "is a directory", 126);
 		closedir(dir);
-		return (1);
+		return (ret);
 	}
 	return (0);
 }

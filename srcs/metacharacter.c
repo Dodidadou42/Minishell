@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 11:45:18 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/03/22 16:49:05 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/04/12 04:42:00 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ void	ft_heredoc_process(char *limiter, int fd_pipe[2], int *status)
 	}
 }
 
-//voir leaks quand ctrl-c
 void	ft_heredoc(t_var *v, int fd_cmd[2], char *line, int *i)
 {
 	char	*limiter;
@@ -87,6 +86,8 @@ int	ft_get_fd_cmd(t_var *v, int fd_cmd[2], char *line, int *i)
 	char	*metachar;
 
 	metachar = ft_get_metachar(line, i);
+	if (line[*i] && line[*i] == '|')
+		++(*i);
 	while (line[*i] && ft_iswspace(line[*i]))
 			++(*i);
 	if (!line[*i])

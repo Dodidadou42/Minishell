@@ -6,7 +6,7 @@
 /*   By: mpelazza <mpelazza@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 02:41:47 by mpelazza          #+#    #+#             */
-/*   Updated: 2023/04/05 05:02:56 by mpelazza         ###   ########.fr       */
+/*   Updated: 2023/04/12 04:38:32 by mpelazza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	ft_exec_cmd(t_var *v, t_list *cmd, char **args, char **envp)
 	ft_split_free(envp);
 	if (!check)
 		ft_exec_error(v, (char *)cmd->content, "permission denied", 126);
-	exit(126);
+	exit(check);
 }
 
 void	ft_exec_fork(t_var *v, int fd_pipe[2], int i)
