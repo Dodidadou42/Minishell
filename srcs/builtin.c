@@ -100,6 +100,3 @@ void	ft_exit(t_var *v, t_list *cmd)
 	ft_putstr_fd("exit\n", STDOUT);
 	exit(ft_atoi(cast));
 }
-//system("leaks minishell");
-// avec 'exec bash' "exit" avant erreurr
-// mais avec 'chsh /bin/bash' "logout" donc jsp

@@ -12,7 +12,6 @@
 
 #include "../includes/minishell.h"
 
-		// Voir pour mettre USER / LOGNAME / HOME dans l'env quand env -i
 t_list	*ft_init_env(char **envp, t_var *v)
 {
 	t_list	*env;
@@ -98,32 +97,3 @@ int	main(int argc, char **argv, char **envp)
 	}
 	return (0);
 }
-
-// signal c'est pour intercepter les ctrl-* mais ca marche pas encore
-//	signal(SIGINT, ft_sig_handler);
-
-	/*//printage commande////////////////////////////////////////////////////
-		t_list	*tmp;
-		int		i;
-		for (i = 0; i <= v->pipe_count; i++)
-		{	
-			printf("pipe[%d]:\n", i);	
-			if (v->cmd[i])
-			{
-				tmp = v->cmd[i];
-				while (tmp)
-				{
-					printf("> %s$\n", (char *)tmp->content);
-					tmp = tmp->next;
-				}
-			}
-		}
-		//printage fd
-		i = 0;
-		tmp = v->fd_cmd;
-		while (tmp)
-		{
-			int *fdd = (int *)tmp->content;
-			printf("%d: fd[0] = %d\tfd[1] = %d\n", i++, fdd[0], fdd[1]);
-			tmp = tmp->next;
-		}////////////////////////////////////////////////////////////////////*/

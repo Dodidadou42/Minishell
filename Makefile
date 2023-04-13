@@ -16,7 +16,6 @@ LIBFT	= -Lincludes/libft -lft
 
 CFLAGS	= -Wall -Wextra -Werror
 
-#READLINE = -lreadline -L/usr/local/opt/readline/lib -I//usr/local/opt/readline/include
 READLINE = -lreadline -L/Users/${USER}/.brew/opt/readline/lib -I/Users/${USER}/.brew/opt/readline/include
 
 GREEN	= \033[32m
@@ -27,7 +26,6 @@ WHITE	= \033[37m
 
 RED		= \033[0;31m
 
-#all:	${NAME}
 all:	check_brew check_readline ${NAME}
 
 .c.o:	

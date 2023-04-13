@@ -71,7 +71,6 @@ void	ft_setup_export(t_var *v, char *cmd, int len, t_list *export)
 	}
 }
 
-//checker unset	//if '=' dans le unset error
 void	ft_setup_unset(t_list **env, t_list *cmd, t_list *prev)
 {
 	char	*tmp;
